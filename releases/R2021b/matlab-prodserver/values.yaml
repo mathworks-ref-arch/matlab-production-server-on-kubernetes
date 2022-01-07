@@ -1,0 +1,53 @@
+# Values for MPS Helm Chart
+
+MathWorks:
+  agreeToLicense: ""
+  licenseServer: ""
+
+mpsSettings:
+  # CTF files are placed here for automatic deployment.
+  autoDeploy:
+    # Inline mount options: hostpath, nfs, azurefileshare, empty (default)
+    volumeType: "empty"
+    # Node mount dir, example: /mnt/share/autodeploy
+    hostpath: ""
+    # =================================================================
+    # NFS server, example: server-sb08-nfs
+    server: ""
+    # NFS subpath, example: /vmgr/sandbox/share/autodeploy
+    path: ""
+    # =================================================================
+    # Azure storage account file share name, example: auto-deploy-share
+    shareName: ""
+    # Azure storage account key secret name, example: azure-file-secret
+    secretName: ""
+    # =================================================================
+  # Maximum number of worker processes (per pod).
+  numWorkers: 2
+
+images:
+  productionServer:
+    registry: containers.mathworks.com
+    repository: matlab-production-server
+    tag: r2021b
+    variant: R2021b
+    pullPolicy: IfNotPresent
+    pullSecret: ""
+
+  matlabRuntime:
+    registry: containers.mathworks.com
+    repository: matlab-runtime
+    tag: r2021b
+    variant: v911
+    pullPolicy: IfNotPresent
+    pullSecret: ""
+
+deploymentSettings:
+  replicaCount: 1
+  restartPolicy: Always
+
+optionalSettings:
+  Redis:
+    host: {}
+    name: myRedis
+
