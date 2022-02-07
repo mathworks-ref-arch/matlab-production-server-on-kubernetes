@@ -1,10 +1,10 @@
 #
-# MPS instance
+# MATLAB Production Server instance
 #
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mps-deployment
+  name: matlab-production-server
   namespace: {{ .Release.Namespace }}
   labels:
     app: mps
@@ -28,14 +28,22 @@ spec:
         image: {{ .Values.images.productionServer.registry }}/{{ .Values.images.productionServer.repository }}:{{ .Values.images.productionServer.tag }}
         env:
         - name: AGREE_TO_MATHWORKS_SOFTWARE_LICENSE
-          value: "{{ .Values.MathWorks.agreeToLicense | lower }}"
+          value: {{ .Values.global.agreeToLicense | default "no" | lower | quote }}
         - name: AGREE_TO_MATLAB_RUNTIME_LICENSE
-          value: "{{ .Values.MathWorks.agreeToLicense | lower }}"
+          value: {{ .Values.global.agreeToLicense | default "no" | lower | quote }}
         - name: LD_LIBRARY_PATH
           value: "/opt/matlabruntime/{{ .Values.images.matlabRuntime.variant }}/runtime/glnxa64:/opt/matlabruntime/{{ .Values.images.matlabRuntime.variant }}/bin/glnxa64:/opt/matlabruntime/{{ .Values.images.matlabRuntime.variant }}/sys/os/glnxa64:/opt/matlabruntime/{{ .Values.images.matlabRuntime.variant }}/extern/bin/glnxa64:/opt/matlabruntime/{{ .Values.images.matlabRuntime.variant }}/sys/opengl/lib/glnxa64"
 
         ports:
         - containerPort: 9910
+
+        resources:
+          requests:
+            cpu: "1"
+            memory: "2Gi"
+          limits:
+            cpu: {{ .Values.matlabProductionServerSettings.numWorkers | default "1" | quote }}
+            memory: "8Gi"
 
         volumeMounts:
         - name: auto-deploy
@@ -96,21 +104,21 @@ spec:
         emptyDir: {}
       - name: mps-config
         configMap:
-          name: mps-configmap
+          name: matlab-production-server-config
       - name: auto-deploy
-        {{- if eq .Values.mpsSettings.autoDeploy.volumeType "hostpath" }}
+        {{- if eq .Values.matlabProductionServerSettings.autoDeploy.volumeType "hostpath" }}
         hostPath:
-          path: {{ .Values.mpsSettings.autoDeploy.hostpath }}
+          path: {{ .Values.matlabProductionServerSettings.autoDeploy.hostpath }}
           type: Directory
-        {{- else if eq .Values.mpsSettings.autoDeploy.volumeType "nfs" }}
+        {{- else if eq .Values.matlabProductionServerSettings.autoDeploy.volumeType "nfs" }}
         nfs:
-          server: {{ .Values.mpsSettings.autoDeploy.server }}
-          path: {{ .Values.mpsSettings.autoDeploy.path }}
+          server: {{ .Values.matlabProductionServerSettings.autoDeploy.server }}
+          path: {{ .Values.matlabProductionServerSettings.autoDeploy.path }}
           readOnly: true
-        {{- else if eq .Values.mpsSettings.autoDeploy.volumeType "azurefileshare" }}
+        {{- else if eq .Values.matlabProductionServerSettings.autoDeploy.volumeType "azurefileshare" }}
         azureFile:
-          shareName: {{ .Values.mpsSettings.autoDeploy.shareName }}
-          secretName: {{ .Values.mpsSettings.autoDeploy.secretName }}
+          shareName: {{ .Values.matlabProductionServerSettings.autoDeploy.shareName }}
+          secretName: {{ .Values.matlabProductionServerSettings.autoDeploy.secretName }}
           readOnly: true
         {{ else }}
         emptyDir: {}

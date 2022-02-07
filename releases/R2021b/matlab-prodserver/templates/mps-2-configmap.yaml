@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: mps-configmap
+  name: matlab-production-server-config
   namespace: {{ .Release.Namespace }}
   labels:
     release: {{ .Release.Name }}
@@ -12,7 +12,7 @@ data:
     --ssl-protocols TLSv1.1,TLSv1.2
     --ssl-ciphers ALL
     --mcr-root /opt/matlabruntime/{{ .Values.images.matlabRuntime.variant }}
-    --num-workers {{ .Values.mpsSettings.numWorkers }}
+    --num-workers {{ .Values.matlabProductionServerSettings.numWorkers | default 1 }}
     --worker-restart-interval 12:00:00
     --worker-memory-check-interval 0:00:30
     --queue-time-trigger 0:00:00.25
@@ -26,7 +26,7 @@ data:
     --log-archive-max-size 1GB
     --log-root ./log
     --log-stdout
-    --license {{ .Values.MathWorks.licenseServer }}
+    --license {{ .Values.global.licenseServer | default "27000@hostname" }}
     --license-grace-period 2:30
     --license-poll-interval 0:10
     --pid-root ./pid

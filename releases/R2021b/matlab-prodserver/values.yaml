@@ -1,10 +1,18 @@
-# Values for MPS Helm Chart
+# Values for MATLAB Production Server Helm Chart
 
-MathWorks:
+global:
+  # MathWorks Cloud Reference Architecture License, example: "yes" (in quotes)
   agreeToLicense: ""
-  licenseServer: ""
+  # Network License Manager: server host and port number, example: 27000@hostname
+  licenseServer: 27000@hostname
+  ingressController:
+    # Nginx settings (optional)
+    name: nginx
+    annotations:
+      nginx.ingress.kubernetes.io/affinity: 'cookie'
+    domainBase: matlabprodserver.mwcloudtest.com
 
-mpsSettings:
+matlabProductionServerSettings:
   # CTF files are placed here for automatic deployment.
   autoDeploy:
     # Inline mount options: hostpath, nfs, azurefileshare, empty (default)
