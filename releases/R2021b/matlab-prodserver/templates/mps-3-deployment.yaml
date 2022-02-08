@@ -39,8 +39,8 @@ spec:
 
         resources:
           requests:
-            cpu: "1"
-            memory: "2Gi"
+            cpu: {{ .Values.deploymentSettings.cpuRequest | default "1" | quote }}
+            memory: {{ .Values.deploymentSettings.memoryRequest | default "2Gi" | quote }}
           limits:
             cpu: {{ .Values.matlabProductionServerSettings.numWorkers | default "1" | quote }}
             memory: "8Gi"

@@ -9,7 +9,7 @@ global:
     # Nginx settings (optional)
     name: nginx
     annotations:
-      nginx.ingress.kubernetes.io/affinity: 'cookie'
+      nginx.ingress.kubernetes.io/load-balance: "round_robin"
     domainBase: matlabprodserver.mwcloudtest.com
 
 matlabProductionServerSettings:
@@ -51,6 +51,8 @@ images:
     pullSecret: ""
 
 deploymentSettings:
+  cpuRequest: "1"
+  memoryRequest: "2Gi"
   replicaCount: 1
   restartPolicy: Always
 

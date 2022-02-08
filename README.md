@@ -25,7 +25,7 @@ Before starting, you need the following:
 * [Docker®](https://www.docker.com/)
 * Running [Kubernetes](https://kubernetes.io/) cluster that meets the following conditions: 
     * Uses Kuberenetes version 1.21 or later
-    * Each container in the Kuberenetes cluster has at least 1 CPU and 2GiB RAM available for use.
+    * Each container in the Kuberenetes cluster has at least 1 CPU core and 2GiB RAM available for use.
 * [kubectl](https://kubernetes.io/docs/reference/kubectl/overview/) command-line tool that can access your Kubernetes cluster
 * [Helm](https://helm.sh/) package manager to install Helm charts that contain preconfigured Kubernetes resources for MATLAB Production Server
 
@@ -67,7 +67,7 @@ After you pull the MATLAB Production Server and MATLAB Runtime container images 
 
 1. Tag the images with information about your private registry. For details, see [docker tag](https://docs.docker.com/engine/reference/commandline/tag/).
 
-2. Push the images to your local registry. For details, see [docker push](https://docs.docker.com/engine/reference/commandline/push/).
+2. Push the images to your private registry. For details, see [docker push](https://docs.docker.com/engine/reference/commandline/push/).
 
 3. In the GitHub repository that you cloned earlier, update the `values.yaml` file located in `/releases/<release>/matlab-prodserver` with the name of your private registry. To do so, update the value of the `registry` variable nested under `productionServer` and `matlabRuntime` variables.
 
@@ -120,7 +120,7 @@ After the deployment is complete, upload the MATLAB Production Server deployable
 The default server configuration properties are stored in a [ConfigMap](https://kubernetes.io/docs/concepts/configuration/configmap/) located at `/releases/<release_number>/matlab-prodserver/templates/mps-2-configmap.yaml`. To update server properties, you can update `mps-2-configmap.yaml` or `values.yaml`. To apply the updated server properties to the deployment, see [helm upgrade](https://helm.sh/docs/helm/helm_upgrade/) and [kubectl scale](https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands#scale).
 
 ## Execute Deployed Functions
-To evaluate MATLAB functions deployed on the server, see [Client Programming](https://www.mathworks.com/help/mps/client-programming.html). 
+To evaluate MATLAB functions deployed on the server, see [Client Programming](https://www.mathworks.com/help/mps/client-programming.html). Only synchronous request execution is supported.
 
 ## Request Enhancements
 
