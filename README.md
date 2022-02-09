@@ -129,7 +129,7 @@ To suggest additional features or capabilities, see
 
 ## Get Technical Support
 
-If you require assistance, email mwlab@mathworks.com.
+If you require assistance, contact [MathWorks Technical Support](https://www.mathworks.com/support/contact_us.html).
 
 ## License
 
