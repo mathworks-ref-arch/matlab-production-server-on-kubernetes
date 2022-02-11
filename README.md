@@ -24,8 +24,8 @@ Before starting, you need the following:
 * [Git™](https://git-scm.com/)
 * [Docker®](https://www.docker.com/)
 * Running [Kubernetes](https://kubernetes.io/) cluster that meets the following conditions: 
-    * Uses Kuberenetes version 1.21 or later
-    * Each container in the Kuberenetes cluster has at least 1 CPU core and 2GiB RAM available for use.
+    * Uses Kubernetes version 1.21 or later
+    * Each container in the Kubernetes cluster has at least 1 CPU core and 2GiB RAM available for use.
 * [kubectl](https://kubernetes.io/docs/reference/kubectl/overview/) command-line tool that can access your Kubernetes cluster
 * [Helm](https://helm.sh/) package manager to install Helm charts that contain preconfigured Kubernetes resources for MATLAB Production Server
 
@@ -71,7 +71,7 @@ After you pull the MATLAB Production Server and MATLAB Runtime container images 
 
 3. In the GitHub repository that you cloned earlier, update the `values.yaml` file located in `/releases/<release>/matlab-prodserver` with the name of your private registry. To do so, update the value of the `registry` variable nested under `productionServer` and `matlabRuntime` variables.
 
-4. If your private registry requires authentication, create a Kuberenetes Secret that your pod can use to pull the image from the private registry. For more information, see [Pull an Image from a Private Registry](https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/-) on the Kuberenets website. 
+4. If your private registry requires authentication, create a Kubernetes Secret that your pod can use to pull the image from the private registry. For more information, see [Pull an Image from a Private Registry](https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/-) on the Kubernetes website. 
 
 ### Provide Mapping for Deployable Archives
 A running Kubernetes cluster is required for deploying MATLAB Production Server. From the Kubernetes cluster that you use for MATLAB Production Server, provide a mapping from the storage location where you want to store MATLAB Production Server deployable archives (CTF files) to a storage resource in your cluster. You can store the deployable archives on the network file system or on the cloud. After the MATLAB Production Server deployment is complete, the deployable archives that you store in the mapped location are automatically deployed to the server.
@@ -85,9 +85,9 @@ To specify mapping, in the `values.yaml` file, under `matlabProductionServerSett
 The default value for `volumeType` is `"empty"`. However, to access deployable archives, you must set it to either `"nfs"` or `"azurefileshare"`. 
 
 ### Install Helm Chart
-The Helm chart for MATLAB Production Server is located in the repository in `/releases/<release_number>/matlab-prodserver`. Use the [helm install](https://helm.sh/docs/helm/helm_install/) command to install the Helm chart for the MATLAB Production Server release that you want to deploy. It is recommended that you install the chart in a separate Kubernetes namespace. For more information about Kubernetes namespaces, see the Kuberenets documentation [Share a Cluster with Namespaces](https://kubernetes.io/docs/tasks/administer-cluster/namespaces/).
+The Helm chart for MATLAB Production Server is located in the repository in `/releases/<release_number>/matlab-prodserver`. Use the [helm install](https://helm.sh/docs/helm/helm_install/) command to install the Helm chart for the MATLAB Production Server release that you want to deploy. It is recommended that you install the chart in a separate Kubernetes namespace. For more information about Kubernetes namespaces, see the Kubernetes documentation [Share a Cluster with Namespaces](https://kubernetes.io/docs/tasks/administer-cluster/namespaces/).
 
-To install the chart, you must set parameters that state your agreemenent to the MathWorks cloud reference architecture license and specify the address of the network license manager. You can set the parameters either in the `values.yaml` file in the chart or when running `helm install`.
+To install the chart, you must set parameters that state your agreement to the MathWorks cloud reference architecture license and specify the address of the network license manager. You can set the parameters either in the `values.yaml` file in the chart or when running `helm install`.
 
 - To accept the license terms, set the `global.agreeToLicense` parameter to `Yes`.  
 - To specify the address of the license server, set the `global.licenseServer` parameter in the format `port_number@host`. 
