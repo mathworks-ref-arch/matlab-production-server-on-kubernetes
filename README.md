@@ -39,7 +39,7 @@ git clone https://github.com/mathworks-ref-arch/matlab-production-server-on-kube
 ```
 2. Navigate to the folder that contains the Helm chart for the release that you want to use, for example, `R2021b`.
 ```
-cd production-server-k8s/releases/<release>/matlab-prodserver
+cd matlab-production-server-on-kubernetes/releases/<release>/matlab-prodserver
 ```
 
 ### Pull Container Images for MATLAB Production Server and MATLAB Runtime
