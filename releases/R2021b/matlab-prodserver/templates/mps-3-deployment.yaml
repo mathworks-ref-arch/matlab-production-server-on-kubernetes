@@ -23,6 +23,10 @@ spec:
         prometheus.io/path: '/api/metrics'
         prometheus.io/port: '9910'
     spec:
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+
       containers:
       - name: mps
         image: {{ .Values.images.productionServer.registry }}/{{ .Values.images.productionServer.repository }}:{{ .Values.images.productionServer.tag }}
