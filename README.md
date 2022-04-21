@@ -1,11 +1,11 @@
 # MATLAB Production Server in Kubernetes
 
-The ```matlab-production-server-on-kubernetes``` repository contains utilities for using MATLAB ® Production Server™ in a Kubernetes ® cluster.  
+The ```matlab-production-server-on-kubernetes``` repository contains utilities for using MATLAB® Production Server™ in a Kubernetes® cluster.  
 
 ## Introduction
 
 This guide helps you to automate the process of running MATLAB
-Production Server in a Kubernetes cluster by using a Helm ® chart. The chart is a collection of YAML
+Production Server in a Kubernetes cluster by using a Helm® chart. The chart is a collection of YAML
 files that define the resources you need to deploy MATLAB Production
 Server in Kubernetes. Once you deploy the server, you can manage it using the
 `kubectl` command-line tool. 
