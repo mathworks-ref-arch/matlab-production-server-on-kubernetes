@@ -1,0 +1,131 @@
+#
+# MATLAB Production Server instance
+#
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: matlab-production-server
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: mps
+    release: {{ .Release.Name }}
+spec:
+  replicas: {{ .Values.deploymentSettings.replicaCount }}
+  selector:
+    matchLabels:
+      app: mps
+  template:
+    metadata:
+      labels:
+        app: mps
+      annotations:
+        prometheus.io/scrape: 'true'
+        prometheus.io/path: '/api/metrics'
+        prometheus.io/port: '9910'
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+
+      containers:
+      - name: mps
+        image: {{ .Values.images.productionServer.registry }}/{{ .Values.images.productionServer.repository }}:{{ .Values.images.productionServer.tag }}
+        env:
+        - name: AGREE_TO_MATHWORKS_SOFTWARE_LICENSE
+          value: {{ .Values.global.agreeToLicense | default "no" | lower | quote }}
+        - name: AGREE_TO_MATLAB_RUNTIME_LICENSE
+          value: {{ .Values.global.agreeToLicense | default "no" | lower | quote }}
+        - name: LD_LIBRARY_PATH
+          value: "/opt/matlabruntime/{{ .Values.images.matlabRuntime.variant }}/runtime/glnxa64:/opt/matlabruntime/{{ .Values.images.matlabRuntime.variant }}/bin/glnxa64:/opt/matlabruntime/{{ .Values.images.matlabRuntime.variant }}/sys/os/glnxa64:/opt/matlabruntime/{{ .Values.images.matlabRuntime.variant }}/extern/bin/glnxa64:/opt/matlabruntime/{{ .Values.images.matlabRuntime.variant }}/sys/opengl/lib/glnxa64"
+
+        ports:
+        - containerPort: 9910
+
+        resources:
+          requests:
+            cpu: {{ .Values.deploymentSettings.cpuRequest | default "1" | quote }}
+            memory: {{ .Values.deploymentSettings.memoryRequest | default "2Gi" | quote }}
+          limits:
+            cpu: {{ .Values.matlabProductionServerSettings.numWorkers | default "1" | quote }}
+            memory: "8Gi"
+
+        volumeMounts:
+        - name: auto-deploy
+          mountPath: "/opt/mpsinstance/auto_deploy"
+        - name: mcr-root
+          mountPath: "/opt/matlabruntime"
+        - name: mps-config
+          mountPath: "/opt/mpsinstance/config"
+
+        startupProbe:
+          exec:
+            command:
+            - ls
+            - /opt/matlabruntime/{{ .Values.images.matlabRuntime.variant }}/matlabruntime_license_agreement.pdf
+          initialDelaySeconds: 30
+          periodSeconds: 30
+
+        livenessProbe:
+          httpGet:
+            path: /api/health
+            port: 9910
+          initialDelaySeconds: 10
+          periodSeconds: 10
+
+        lifecycle:
+          preStop:
+            exec:
+              command: ["sh", "/opt/mpsinstance/stopmps.sh"]
+
+        imagePullPolicy: {{ .Values.images.productionServer.pullPolicy }}
+
+      initContainers:
+      - name: matlab-runtime
+        image: {{ .Values.images.matlabRuntime.registry }}/{{ .Values.images.matlabRuntime.repository }}:{{ .Values.images.matlabRuntime.tag }}
+
+        command:
+        - /bin/sh
+        - -c
+        - "cp -r /opt/matlabruntime/* /mnt/"
+
+        volumeMounts:
+        - name: mcr-root
+          mountPath: "/mnt"
+
+        imagePullPolicy: {{ .Values.images.matlabRuntime.pullPolicy }}
+
+      restartPolicy: {{ .Values.deploymentSettings.restartPolicy }}
+      imagePullSecrets:
+      {{- if .Values.images.productionServer.pullSecret }}
+      - name: {{ .Values.images.productionServer.pullSecret }}
+      {{- end }}
+      {{- if .Values.images.matlabRuntime.pullSecret }}
+      - name: {{ .Values.images.matlabRuntime.pullSecret }}
+      {{- end }}
+
+      volumes:
+      - name: mcr-root
+        emptyDir: {}
+      - name: mps-config
+        configMap:
+          name: matlab-production-server-config
+      - name: auto-deploy
+        {{- if eq .Values.matlabProductionServerSettings.autoDeploy.volumeType "hostpath" }}
+        hostPath:
+          path: {{ .Values.matlabProductionServerSettings.autoDeploy.hostpath }}
+          type: Directory
+        {{- else if eq .Values.matlabProductionServerSettings.autoDeploy.volumeType "nfs" }}
+        nfs:
+          server: {{ .Values.matlabProductionServerSettings.autoDeploy.server }}
+          path: {{ .Values.matlabProductionServerSettings.autoDeploy.path }}
+          readOnly: true
+        {{- else if eq .Values.matlabProductionServerSettings.autoDeploy.volumeType "azurefileshare" }}
+        azureFile:
+          shareName: {{ .Values.matlabProductionServerSettings.autoDeploy.shareName }}
+          secretName: {{ .Values.matlabProductionServerSettings.autoDeploy.secretName }}
+          readOnly: true
+        {{ else }}
+        emptyDir: {}
+        {{- end }}
+
