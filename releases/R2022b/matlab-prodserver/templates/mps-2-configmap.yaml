@@ -54,3 +54,9 @@ data:
     }
   {{- end }}
 
+  routes.json: |
+    {
+      "version": "1.0.0",
+      "pathmap": []
+    }
+
