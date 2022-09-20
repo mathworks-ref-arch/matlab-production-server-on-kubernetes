@@ -42,6 +42,7 @@ data:
     --server-memory-threshold-overflow-action purge_responses
     --enable-discovery
     --enable-metrics
+    --routes-file ./config/routes.json
 
   {{- if .Values.optionalSettings.Redis.host }}
   mps_cache_config: |
