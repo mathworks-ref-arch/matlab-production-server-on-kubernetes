@@ -50,7 +50,11 @@ data:
         {"{{ .Values.optionalSettings.Redis.name }}": 
             {"Provider":"Redis",
             "Host":{{ .Values.optionalSettings.Redis.host | quote }},
-            "Port":{{ .Values.optionalSettings.Redis.port | default 6379 }}}
+            "Port":{{ .Values.optionalSettings.Redis.port | default 6379 }}
+          {{- if .Values.optionalSettings.Redis.auth }}
+            ,"Key":{{ .Values.optionalSettings.Redis.auth | quote }}
+          {{- end }}
+            }
         }
     }
   {{- end }}

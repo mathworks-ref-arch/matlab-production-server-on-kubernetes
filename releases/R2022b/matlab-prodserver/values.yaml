@@ -61,5 +61,7 @@ deploymentSettings:
 optionalSettings:
   Redis:
     host: {}
+    auth: ""
     name: myRedis
+  # port: 6379
 
