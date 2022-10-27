@@ -16,7 +16,6 @@ For more information about MATLAB Production Server, see the [MATLAB Production 
 Before starting, you need the following:
 
 *   MATLAB Production Server license that meets the following conditions:
-    * Current on [Software Maintenance Service (SMS)](https://www.mathworks.com/services/maintenance.html).  
     * Linked to a [MathWorks Account](https://www.mathworks.com/mwaccount/).
     * Concurrent license type. To check your license type, see [MathWorks License Center](https://www.mathworks.com/licensecenter/). 
     * Configured to use a network license manager. The license manager must be accessible from the Kubernetes cluster where you deploy MATLAB Production Server but must not be installed in the cluster.
