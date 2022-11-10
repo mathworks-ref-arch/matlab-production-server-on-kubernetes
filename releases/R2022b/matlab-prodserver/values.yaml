@@ -69,7 +69,7 @@ optionalSettings:
   Prometheus:
     # Create a ServiceMonitor [monitoring.coreos.com/v1] for metrics discovery.
     # Requires Prometheus and Prometheus Operator (CRDs) to be pre-installed.
-    enabled: true
+    enabled: false
     # Helm release name or app.kubernetes.io/part-of label of Prometheus stack.
     # ServiceMonitor needs to match on this value (if Prometheus is enabled).
     matchOn: prometheus
