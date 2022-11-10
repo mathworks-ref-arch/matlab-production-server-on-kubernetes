@@ -73,4 +73,3 @@ optionalSettings:
     # Helm release name or app.kubernetes.io/part-of label of Prometheus stack.
     # ServiceMonitor needs to match on this value (if Prometheus is enabled).
     matchOn: prometheus
-
