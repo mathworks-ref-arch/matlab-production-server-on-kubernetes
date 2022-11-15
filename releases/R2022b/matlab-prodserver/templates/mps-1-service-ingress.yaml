@@ -4,46 +4,69 @@
 kind: Service
 apiVersion: v1
 metadata:
-    name: matlab-production-server
-    namespace: {{ .Release.Namespace }}
-    labels:
-        app: mps
-        release: {{ .Release.Name }}
+  name: matlab-production-server
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: mps
+    release: {{ .Release.Name }}
 spec:
-    selector:
-        app: mps
-    ports:
-    - name: mps-port
-      port: 9910
-      targetPort: 9910
-    type: ClusterIP
+  selector:
+    app: mps
+  ports:
+  - name: mps-port
+    port: 9910
+    targetPort: 9910
+  type: ClusterIP
 
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-    name: matlab-production-server-ingress
-    namespace: {{ .Release.Namespace }}
-    labels:
-        release: {{ .Release.Name }}
-    annotations:
-        {{ if .Values.global.ingressController }}
-        ## set ingress-conroller vendor-specific annotations:
-        {{- range $key, $value := .Values.global.ingressController.annotations }}
-        {{ $key }}: {{ quote $value }}
-        {{- end }}
-        {{ end }}
+  name: matlab-production-server-ingress
+  namespace: {{ .Release.Namespace }}
+  labels:
+    release: {{ .Release.Name }}
+  annotations:
+    {{ if .Values.global.ingressController }}
+    ## set ingress-conroller vendor-specific annotations:
+    {{- range $key, $value := .Values.global.ingressController.annotations }}
+    {{ $key }}: {{ quote $value }}
+    {{- end }}
+    {{ end }}
 spec:
-    ingressClassName: {{ .Values.global.ingressController.name }}
-    rules:
-      - host: {{ .Values.global.ingressController.domainBase }}
-        http:
-          paths:
-            - path: /
-              pathType: Prefix
-              backend:
-                  service:
-                      name: matlab-production-server
-                      port:
-                          number: 9910
+  ingressClassName: {{ .Values.global.ingressController.name }}
+  rules:
+  - host: {{ .Values.global.ingressController.domainBase }}
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: matlab-production-server
+            port:
+              number: 9910
+
+---
+{{ if and (.Values.optionalSettings.Prometheus.enabled) (.Capabilities.APIVersions.Has "monitoring.coreos.com/v1/ServiceMonitor") }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: matlab-production-server-monitor
+  labels:
+    app: mps
+    app.kubernetes.io/part-of: {{ .Values.optionalSettings.Prometheus.matchOn }}
+    release: {{ .Values.optionalSettings.Prometheus.matchOn }}
+spec:
+  selector:
+    matchLabels:
+      app: mps
+      release: {{ .Release.Name }}
+  namespaceSelector:
+    matchNames:
+    - {{ .Release.Namespace }}
+  endpoints:
+  - port: mps-port
+    path: /api/metrics
+{{ end }}
 

@@ -19,9 +19,11 @@ spec:
       labels:
         app: mps
       annotations:
+        {{ if not .Values.optionalSettings.Prometheus.enabled }}
         prometheus.io/scrape: 'true'
         prometheus.io/path: '/api/metrics'
         prometheus.io/port: '9910'
+        {{ end }}
     spec:
       securityContext:
         runAsNonRoot: true
