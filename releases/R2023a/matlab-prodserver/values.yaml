@@ -1,0 +1,75 @@
+# Values for MATLAB Production Server Helm Chart
+
+global:
+  # MathWorks Cloud Reference Architecture License, example: "yes" (in quotes)
+  agreeToLicense: ""
+  # Network License Manager: server host and port number, example: 27000@hostname
+  licenseServer: 27000@hostname
+  ingressController:
+    # Nginx settings (optional)
+    name: nginx
+    annotations:
+      nginx.ingress.kubernetes.io/affinity: "cookie"
+      nginx.ingress.kubernetes.io/load-balance: "round_robin"
+      nginx.ingress.kubernetes.io/proxy-read-timeout: "300"
+    domainBase: matlabprodserver.mwcloudtest.com
+
+matlabProductionServerSettings:
+  # CTF files are placed here for automatic deployment.
+  autoDeploy:
+    # Inline mount options: hostpath, nfs, azurefileshare, empty (default)
+    volumeType: "empty"
+    # Node mount dir, example: /mnt/share/autodeploy
+    hostpath: ""
+    # =================================================================
+    # NFS server, example: server-sb08-nfs
+    server: ""
+    # NFS subpath, example: /vmgr/sandbox/share/autodeploy
+    path: ""
+    # =================================================================
+    # Azure storage account file share name, example: auto-deploy-share
+    shareName: ""
+    # Azure storage account key secret name, example: azure-file-secret
+    secretName: ""
+    # =================================================================
+  # Maximum number of worker processes (per pod).
+  numWorkers: 2
+
+images:
+  productionServer:
+    registry: containers.mathworks.com
+    repository: matlab-production-server
+    tag: r2023a
+    variant: R2023a
+    pullPolicy: IfNotPresent
+    pullSecret: ""
+
+  matlabRuntime:
+    registry: containers.mathworks.com
+    repository: matlab-runtime
+    tag: r2023a
+    variant: R2023a
+    pullPolicy: IfNotPresent
+    pullSecret: ""
+
+deploymentSettings:
+  cpuRequest: "1"
+  memoryRequest: "2Gi"
+  replicaCount: 1
+  restartPolicy: Always
+
+optionalSettings:
+  Redis:
+    # Redis service fully qualified name, example: redis.namespace.svc.cluster.local
+    host: {}
+    auth: ""
+    name: myRedis
+  # port: 6379
+
+  Prometheus:
+    # Create a ServiceMonitor [monitoring.coreos.com/v1] for metrics discovery.
+    # Requires Prometheus and Prometheus Operator (CRDs) to be pre-installed.
+    enabled: false
+    # Helm release name or app.kubernetes.io/part-of label of Prometheus stack.
+    # ServiceMonitor needs to match on this value (if Prometheus is enabled).
+    matchOn: prometheus

@@ -36,7 +36,7 @@ The MATLAB Production Server on Kubernetes GitHub repository contains Helm chart
 ```
 git clone https://github.com/mathworks-ref-arch/matlab-production-server-on-kubernetes.git
 ```
-2. Navigate to the folder that contains the Helm chart for the release that you want to use, for example, `R2022b`.
+2. Navigate to the folder that contains the Helm chart for the release that you want to use, for example, `R2023a`.
 ```
 cd matlab-production-server-on-kubernetes/releases/<release>/matlab-prodserver
 ```
@@ -47,14 +47,14 @@ cd matlab-production-server-on-kubernetes/releases/<release>/matlab-prodserver
 docker login containers.mathworks.com
 ```  
 
-2. Pull the container image for MATLAB Production Server to your machine by specifying as input parameters the name of the container registry (`containers.mathworks.com`), name of the repository (`matlab-production-server`), and the release (for example, `r2022b`). 
+2. Pull the container image for MATLAB Production Server to your machine by specifying as input parameters the name of the container registry (`containers.mathworks.com`), name of the repository (`matlab-production-server`), and the release (for example, `r2023a`). 
 
 The `values.yaml` file contains the values for these parameters. The `values.yaml` file is located in `/releases/<release>/matlab-prodserver` in the GitHub repository that you cloned earlier. In `values.yaml`, under the `productionServer` variable, locate the `registry`, `repository`, and `tag` variables. `registry` contains the the name of the container registry, `repository` contains the name of the repository, and `tag` contains the release. 
 ```
 docker pull containers.mathworks.com/matlab-production-server:<release>
 ```
 
-3. Pull the container image for MATLAB Runtime to your machine by specifying as input parameters the name of the container registry (`containers.mathworks.com`), name of the repository (`matlab-runtime`), and the release (for example, `r2022b`). 
+3. Pull the container image for MATLAB Runtime to your machine by specifying as input parameters the name of the container registry (`containers.mathworks.com`), name of the repository (`matlab-runtime`), and the release (for example, `r2023a`). 
 
 The `values.yaml` file contains the values for these parameters. The `values.yaml` file is located in `/releases/<release>/matlab-prodserver` in the GitHub repository that you cloned earlier. In `values.yaml`, under the `matlabRuntime` variable, locate the `registry`, `repository`, and `tag` variables. `registry` contains the the name of the container registry, `repository` contains the name of the repository, and `tag` contains the release.
 
@@ -132,5 +132,5 @@ If you require assistance, contact [MathWorks Technical Support](https://www.mat
 
 ## License
 
-MATHWORKS CLOUD REFERENCE ARCHITECTURE LICENSE © 2022 The MathWorks, Inc.
+MATHWORKS CLOUD REFERENCE ARCHITECTURE LICENSE © 2023 The MathWorks, Inc.
 
