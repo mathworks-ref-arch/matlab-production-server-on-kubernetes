@@ -17,7 +17,7 @@ global:
 matlabProductionServerSettings:
   # CTF files are placed here for automatic deployment.
   autoDeploy:
-    # Inline mount options: hostpath, nfs, azurefileshare, empty (default)
+    # Inline mount options: hostpath, nfs, pvc, azurefileshare, empty (default)
     volumeType: "empty"
     # Node mount dir, example: /mnt/share/autodeploy
     hostpath: ""
@@ -26,6 +26,9 @@ matlabProductionServerSettings:
     server: ""
     # NFS subpath, example: /vmgr/sandbox/share/autodeploy
     path: ""
+    # =================================================================
+    # Persistent-Volume-Claim name, example: autodeploy-pv-claim
+    claimName: ""
     # =================================================================
     # Azure storage account file share name, example: auto-deploy-share
     shareName: ""
