@@ -91,11 +91,13 @@ Deploying MATLAB Production Server requires a running Kubernetes cluster. From t
 
 To specify mapping, in the `values.yaml` file, under `matlabProductionServerSettings`, set values for the variables under `autoDeploy`.
 
-- To specify a location on the network file system for storing deployable archives, under `autoDeploy`, set `volumeType` to `"nfs"` and specify values for the `server` and `path` variables. 
+To specify the storage location for storing deployable archives, under `autoDeploy`, set `volumeType` to one of the following:
 
-- To specify Azure™ file share as the storage location for deployable archives, under `autoDeploy`, set `volumeType` to `"azurefileshare"` and specify values for `shareName` and `secretName` variables. This assumes that you already created the file share and created a Kubernetes secret to access the file share. For more information about using an Azure file share, see [Create and use a volume with Azure Files in Azure Kubernetes Service (AKS)](https://learn.microsoft.com/en-us/azure/aks/azure-csi-files-storage-provision) in the Azure documentation.
+* `"nfs"` &mdash; Store archives to a location on the network file system. Specify values for the `server` and `path` variables.
+* `"pvc"` &mdash; Store archives to a persistent volume by using a Persistent Volume Claim. Specify a value for the `claimName` variable. To use this option, you must have an existing Persistent Volume Claim that is already bound to its underlying storage volume.  
+* `"azurefileshare"`  &mdash; Store archives to a file share using Azure™ Files. Specify values for `shareName` and `secretName` variables. To use this option, you must have an existing file share and Kubernetes secret used to access the file share. For details about Azure file shares, see [Create and use a volume with Azure Files in Azure Kubernetes Service (AKS)](https://learn.microsoft.com/en-us/azure/aks/azure-csi-files-storage-provision) in the Azure documentation.
 
-The default value for `volumeType` is `"empty"`. However, to access deployable archives, you must set it to either `"nfs"` or `"azurefileshare"`. 
+The default value for `volumeType` is `"empty"`. However, to access deployable archives, you must set `volumeType` to one of the previously described options. 
 
 ### Install Helm Chart
 The Helm chart for MATLAB Production Server is located in the repository in `/releases/<release>/matlab-prodserver`. To install the Helm chart for the MATLAB Production Server release that you want to deploy, use the [helm install](https://helm.sh/docs/helm/helm_install/) command. Install the chart in a separate Kubernetes namespace. For more information about Kubernetes namespaces, see [Share a Cluster with Namespaces](https://kubernetes.io/docs/tasks/administer-cluster/namespaces/) in the Kubernetes documentation.
@@ -118,16 +120,23 @@ The deployment name is `deployment.apps/matlab-production-server`. You can use t
 ### Upload Deployable Archive
 After the deployment is complete, upload the MATLAB Production Server deployable archive to your network file server or Azure file share. All users must have read permission to the deployable archive.
 
-### Add Port Forwarding
-By default, the server runs on port 9910 inside the cluster. If you want the server to be accessible from outside the cluster, add port forwarding that maps the internal port 9910 to a port that is available outside the cluster. To add port forwarding, use the `kubectl` command or the [Ingress](https://kubernetes.io/docs/concepts/services-networking/ingress/) Kubernetes API object.
 
-* This sample `kubectl` command allows the `svc/matlab-production-server` service to accept connections from any client and maps the port 9910 inside the cluster to port 19910 available outside the cluster: 
+### Manage External Access Using Ingress
+You can manage access to MATLAB Production Server by specifying an [Ingress](https://kubernetes.io/docs/concepts/services-networking/ingress/Ingress) controller. The Ingress controller also acts as a load balancer and is the preferred way to expose MATLAB Production Server services in production. This reference architecture assumes that you have an existing Ingress controller already running on the Kubernetes cluster. Specify controller options in the `ingressController` variable of the `values.yaml` file or use the default values.
 
- ```
- kubectl port-forward --address 0.0.0.0 --namespace=<k8s-namespace> svc/matlab-production-server 19910:9910 &
+### Test Client Access Using Port Forwarding
+To test that the deployment was successful, first, use *port forwarding* to map the port that is running MATLAB Production Server inside the cluster (default = 9910) to a port that is available outside the cluster.
+
+To add port forwarding, use the [kubectl port-forward](https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands#port-forward) command. This example maps the default internal port 9910 to port 19910. Clients from any IP address can then access the `svc/matlab-production-server` service from outside the cluster by connecting to port 19910.
+```
+kubectl port-forward --address 0.0.0.0 --namespace=<k8s-namespace> svc/matlab-production-server 19910:9910 &
 ```
 
-* To use Ingress, specify values in the `ingressController` variable in the `values.yaml` file or use the default values.
+Then, test the server connection by using a `curl` command. This example tests the connection to the health check API by accessing the mapped port (19910) on the localhost. If `curl` is installed on a different machine, replace `localhost` with the hostname for that machine.
+```
+curl localhost:19910/api/health
+```
+Sample JSON output for a successful connection: `{"status": "ok"}`
 
 ### Update Server Configuration Properties
 The default server configuration properties are stored in a [ConfigMap](https://kubernetes.io/docs/concepts/configuration/configmap/) located at `/releases/<release>/matlab-prodserver/templates/mps-2-configmap.yaml`. To update server properties, you can update `mps-2-configmap.yaml` or `values.yaml`. To apply the updated server properties to the deployment, see [helm upgrade](https://helm.sh/docs/helm/helm_upgrade/) and [kubectl scale](https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands#scale).
