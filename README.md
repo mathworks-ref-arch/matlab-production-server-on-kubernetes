@@ -38,7 +38,7 @@ The MATLAB Production Server on Kubernetes GitHub repository contains Helm chart
     ```
     git clone https://github.com/mathworks-ref-arch/matlab-production-server-on-kubernetes.git
     ```
-    2. Navigate to the Helm chart folder for the release you want to use. Replace \<release\> with the release version, for example, `R2023a`.
+2. Navigate to the Helm chart folder for the release you want to use. Replace `<release>` with the release version, for example, `R2023a`.
     ```
     cd matlab-production-server-on-kubernetes/releases/<release>/matlab-prodserver
     ```
@@ -70,7 +70,7 @@ The MATLAB Production Server on Kubernetes GitHub repository contains Helm chart
     docker pull containers.mathworks.com/matlab-runtime:<release-tag>
     ```
     * `containers.mathworks.com` is the name of the container registry.
-    * `matlab-runtime` is the name of the MATLAB Runtime repository.
+    * `matlab-runtime` is the name of the repository.
     * `<release-tag>` is the tag name of the MATLAB Runtime release. Update this value to the release version of the MATLAB Runtime you are using, for example, `r2023a`. MATLAB Production Server supports MATLAB Runtime versions up to six releases back from the MATLAB Production Server version you are using.
 
     The `values.yaml` file specifies these values in the `matlabRuntime` section, in the `registry`, `repository`, and `tag` variables, respectively.  
