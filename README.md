@@ -4,11 +4,11 @@ The ```matlab-production-server-on-kubernetes``` repository contains utilities f
 
 ## Introduction
 
-This guide helps you to automate the process of running MATLAB
+This guide helps you automate the process of running MATLAB
 Production Server in a Kubernetes cluster by using a Helm® chart. The chart is a collection of YAML
 files that define the resources you need to deploy MATLAB Production
 Server in Kubernetes. Once you deploy the server, you can manage it using the
-`kubectl` command-line tool. 
+`kubectl` command-line tool.
 
 For more information about MATLAB Production Server, see the [MATLAB Production Server documentation](https://www.mathworks.com/help/mps/index.html).
 
@@ -25,10 +25,10 @@ Before starting, you need the following:
 * [Git™](https://git-scm.com/)
 * [Docker®](https://www.docker.com/)
 * Running [Kubernetes](https://kubernetes.io/) cluster that meets the following conditions: 
-    * Uses Kubernetes version 1.24 or later
-    * Each MATLAB Production Server container in the Kubernetes cluster requires at least 1 CPU core and 2GiB RAM.
-* [kubectl](https://kubernetes.io/docs/reference/kubectl/overview/) command-line tool that can access your Kubernetes cluster.
-* [Helm](https://helm.sh/) package manager to install Helm charts that contain preconfigured Kubernetes resources for MATLAB Production Server.
+    * Uses Kubernetes version 1.24 or later.
+    * Each MATLAB Production Server container in the Kubernetes cluster requires at least 1 CPU core and 2 GiB RAM.
+* [kubectl](https://kubernetes.io/docs/reference/kubectl/overview/) command-line tool that can access your Kubernetes cluster
+* [Helm](https://helm.sh/) package manager to install Helm charts that contain preconfigured Kubernetes resources for MATLAB Production Server
 
 ## Deployment Steps
 ### Clone GitHub® Repository that Contains Helm Chart
