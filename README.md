@@ -122,7 +122,7 @@ After the deployment is complete, upload the MATLAB Production Server deployable
 
 
 ### Manage External Access Using Ingress
-You can manage access to MATLAB Production Server by specifying an [Ingress](https://kubernetes.io/docs/concepts/services-networking/ingress) controller. The Ingress controller also acts as a load balancer and is the preferred way to expose MATLAB Production Server services in production. This reference architecture assumes that you have an existing Ingress controller already running on the Kubernetes cluster. Specify controller options in the `ingressController` variable of the `values.yaml` file or use the default values.
+You can manage access to MATLAB Production Server by specifying an [Ingress](https://kubernetes.io/docs/concepts/services-networking/ingress/) controller. The Ingress controller also acts as a load balancer and is the preferred way to expose MATLAB Production Server services in production. This reference architecture assumes that you have an existing Ingress controller already running on the Kubernetes cluster. Specify controller options in the `ingressController` variable of the `values.yaml` file or use the default values.
 
 ### Test Client Access Using Port Forwarding
 To test that the deployment was successful, first, use *port forwarding* to map the port that is running MATLAB Production Server inside the cluster (default = 9910) to a port that is available outside the cluster.
