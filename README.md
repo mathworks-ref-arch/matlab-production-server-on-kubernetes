@@ -29,6 +29,7 @@ Before starting, you need the following:
     * Each MATLAB Production Server container in the Kubernetes cluster requires at least 1 CPU core and 2 GiB RAM.
 * [kubectl](https://kubernetes.io/docs/reference/kubectl/overview/) command-line tool that can access your Kubernetes cluster
 * [Helm](https://helm.sh/) package manager to install Helm charts that contain preconfigured Kubernetes resources for MATLAB Production Server
+    * Uses Helm version v3.10.1 or later.
 
 If you do not have a license, please contact your MathWorks representative [here](https://www.mathworks.com/company/aboutus/contact_us/contact_sales.html) or [request a trial license](https://www.mathworks.com/campaigns/products/trials.html?prodcode=PR). 
 

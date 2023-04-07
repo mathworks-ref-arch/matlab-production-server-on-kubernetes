@@ -64,7 +64,7 @@ deploymentSettings:
 optionalSettings:
   Redis:
     # Redis service fully qualified name, example: redis.namespace.svc.cluster.local
-    host: {}
+    host: ""
     auth: ""
     name: myRedis
   # port: 6379
