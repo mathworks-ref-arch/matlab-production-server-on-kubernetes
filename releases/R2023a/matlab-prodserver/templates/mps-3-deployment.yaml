@@ -35,9 +35,9 @@ spec:
         image: {{ .Values.images.productionServer.registry }}/{{ .Values.images.productionServer.repository }}:{{ .Values.images.productionServer.tag }}
         env:
         - name: AGREE_TO_MATHWORKS_SOFTWARE_LICENSE
-          value: {{ .Values.global.agreeToLicense | default "no" | lower | quote }}
+          value: {{ required "agreeToLicense must be set to \"yes\"." .Values.global.agreeToLicense | default "no" | lower | quote }}
         - name: AGREE_TO_MATLAB_RUNTIME_LICENSE
-          value: {{ .Values.global.agreeToLicense | default "no" | lower | quote }}
+          value: {{ required "agreeToLicense must be set to \"yes\"." .Values.global.agreeToLicense | default "no" | lower | quote }}
         - name: LD_LIBRARY_PATH
           value: "/opt/matlabruntime/{{ .Values.images.matlabRuntime.variant }}/runtime/glnxa64:/opt/matlabruntime/{{ .Values.images.matlabRuntime.variant }}/bin/glnxa64:/opt/matlabruntime/{{ .Values.images.matlabRuntime.variant }}/sys/os/glnxa64:/opt/matlabruntime/{{ .Values.images.matlabRuntime.variant }}/extern/bin/glnxa64:/opt/matlabruntime/{{ .Values.images.matlabRuntime.variant }}/sys/opengl/lib/glnxa64"
 
