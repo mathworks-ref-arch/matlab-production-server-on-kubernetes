@@ -110,7 +110,7 @@ Before installing the chart, first set parameters that state your agreement to t
 Then, install the Helm chart for MATLAB Production Server by using the `helm install` command:
 
 ```
-helm install [-n <k8s-namespace>] --generate-name <path/to/chart>
+helm install -f <path/to/values-overrides.yaml> [-n <k8s-namespace>] --generate-name <path/to/chart>
 ```
 
 After you install the chart, the pod takes a few minutes to initialize because the installation consists of approximately 10 GB of container images.
