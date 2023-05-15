@@ -41,7 +41,7 @@ The MATLAB Production Server on Kubernetes GitHub repository contains Helm chart
     ```
     git clone https://github.com/mathworks-ref-arch/matlab-production-server-on-kubernetes.git
     ```
-    This repository includes Helm chart folders for each supported MATLAB Production Server release and a `values-override.yaml` file containing configuration options that apply across all release deployments.
+    This repository includes Helm chart folders for each supported MATLAB Production Server release and a `values-overrides.yaml` file containing configuration options that apply across all release deployments.
 
 2. Navigate to the Helm chart folder for the release you want to use. Replace `<release>` with the release version, for example, `R2023a`.
     ```
@@ -89,7 +89,7 @@ After you pull the MATLAB Production Server and MATLAB Runtime container images 
 ### Provide Mapping for Deployable Archives
 Deploying MATLAB Production Server requires a running Kubernetes cluster. From the Kubernetes cluster that you use for MATLAB Production Server, provide a mapping from the storage location where you want to store MATLAB Production Server deployable archives (CTF files) to a storage resource in your cluster. You can store the deployable archives on the network file system or on the cloud. After the MATLAB Production Server deployment is complete, the deployable archives that you store in the mapped location are automatically deployed to the server.
 
-To specify mapping, in the top-level `values-override.yaml` file, under `matlabProductionServerSettings`, set values for the variables under `autoDeploy`.
+To specify mapping, in the top-level `values-overrides.yaml` file, under `matlabProductionServerSettings`, set values for the variables under `autoDeploy`.
 
 To specify the storage location for storing deployable archives, under `autoDeploy`, set `volumeType` to one of the following:
 
@@ -102,7 +102,7 @@ The default value for `volumeType` is `"empty"`. However, to access deployable a
 ### Install Helm Chart
 The Helm chart for MATLAB Production Server is located in the repository in `/releases/<release>/matlab-prodserver`. To install the Helm chart for the MATLAB Production Server release that you want to deploy, use the [helm install](https://helm.sh/docs/helm/helm_install/) command. Install the chart in a separate Kubernetes namespace. For more information about Kubernetes namespaces, see [Share a Cluster with Namespaces](https://kubernetes.io/docs/tasks/administer-cluster/namespaces/) in the Kubernetes documentation.
 
-Before installing the chart, first set parameters that state your agreement to the MathWorks cloud reference architecture license and specify the address of the network license manager. In the top-level `values-override.yaml` file, set these parameters:
+Before installing the chart, first set parameters that state your agreement to the MathWorks cloud reference architecture license and specify the address of the network license manager. In the top-level `values-overrides.yaml` file, set these parameters:
 
 - To accept the license terms, set `global` > `agreeToLicense` to `"yes"`.
 - To specify the address of the license server, set `global` > `licenseServer` using the format `port_number@host`. 
@@ -122,7 +122,7 @@ After the deployment is complete, upload the MATLAB Production Server deployable
 
 
 ### Manage External Access Using Ingress
-You can manage access to MATLAB Production Server by specifying an [Ingress](https://kubernetes.io/docs/concepts/services-networking/ingress/) controller. The Ingress controller also acts as a load balancer and is the preferred way to expose MATLAB Production Server services in production. This reference architecture assumes that you have an existing Ingress controller already running on the Kubernetes cluster. Specify controller options in the `ingressController` variable of the `values-override.yaml` file or use the default values.
+You can manage access to MATLAB Production Server by specifying an [Ingress](https://kubernetes.io/docs/concepts/services-networking/ingress/) controller. The Ingress controller also acts as a load balancer and is the preferred way to expose MATLAB Production Server services in production. This reference architecture assumes that you have an existing Ingress controller already running on the Kubernetes cluster. Specify controller options in the `ingressController` variable of the `values-overrides.yaml` file or use the default values.
 
 ### Test Client Access Using Port Forwarding
 To test that the deployment was successful, first, use *port forwarding* to map the port that is running MATLAB Production Server inside the cluster (default = 9910) to a port that is available outside the cluster.
