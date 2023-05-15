@@ -65,7 +65,7 @@ spec:
             command:
             - ls
             - /opt/matlabruntime/{{ .Values.images.matlabRuntime.variant }}/matlabruntime_license_agreement.pdf
-          initialDelaySeconds: 30
+          initialDelaySeconds: 10
           periodSeconds: 30
 
         livenessProbe:
