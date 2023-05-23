@@ -32,7 +32,7 @@ spec:
 
       containers:
       - name: mps
-        image: {{ .Values.images.productionServer.registry }}/{{ .Values.images.productionServer.repository }}:{{ .Values.images.productionServer.tag }}
+        image: {{ .Values.global.images.registry | default .Values.images.productionServer.registry }}/{{ .Values.images.productionServer.repository }}:{{ .Values.images.productionServer.tag }}
         env:
         - name: AGREE_TO_MATHWORKS_SOFTWARE_LICENSE
           value: {{ required "agreeToLicense must be set to \"yes\"." .Values.global.agreeToLicense | default "no" | lower | quote }}
@@ -84,7 +84,7 @@ spec:
 
       initContainers:
       - name: matlab-runtime
-        image: {{ .Values.images.matlabRuntime.registry }}/{{ .Values.images.matlabRuntime.repository }}:{{ .Values.images.matlabRuntime.tag }}
+        image: {{ .Values.global.images.registry | default .Values.images.matlabRuntime.registry }}/{{ .Values.images.matlabRuntime.repository }}:{{ .Values.images.matlabRuntime.tag }}
 
         command:
         - /bin/sh
@@ -99,10 +99,13 @@ spec:
 
       restartPolicy: {{ .Values.deploymentSettings.restartPolicy }}
       imagePullSecrets:
+      {{- if .Values.global.images.pullSecret }}
+      - name: {{ .Values.global.images.pullSecret }}
+      {{- end }}
       {{- if .Values.images.productionServer.pullSecret }}
       - name: {{ .Values.images.productionServer.pullSecret }}
       {{- end }}
-      {{- if .Values.images.matlabRuntime.pullSecret }}
+      {{- if and .Values.images.matlabRuntime.pullSecret (ne .Values.images.matlabRuntime.pullSecret .Values.images.productionServer.pullSecret) }}
       - name: {{ .Values.images.matlabRuntime.pullSecret }}
       {{- end }}
 

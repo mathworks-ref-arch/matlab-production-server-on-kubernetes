@@ -82,9 +82,11 @@ After you pull the MATLAB Production Server and MATLAB Runtime container images 
 
 2. Push the images to your private registry by using [docker push](https://docs.docker.com/engine/reference/commandline/push/).
 
-3. In the `values.yaml` file, set the `productionServer` > `registry` and `matlabRuntime` > `registry` variables to the name of your private registry.
+3. In the `values-overrides.yaml` file, set the `global` > `images` > `registry` variable to the name of your private registry.
 
 4. If your private registry requires authentication, create a Kubernetes Secret that your pod can use to pull the image from the private registry. For more information, see [Pull an Image from a Private Registry](https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/) in the Kubernetes documentation. 
+
+5. In the `values-overrides.yaml` file, set the `global` > `images` > `pullSecret` variable to the name of the Kubernetes Secret you created.
 
 ### Provide Mapping for Deployable Archives
 Deploying MATLAB Production Server requires a running Kubernetes cluster. From the Kubernetes cluster that you use for MATLAB Production Server, provide a mapping from the storage location where you want to store MATLAB Production Server deployable archives (CTF files) to a storage resource in your cluster. You can store the deployable archives on the network file system or on the cloud. After the MATLAB Production Server deployment is complete, the deployable archives that you store in the mapped location are automatically deployed to the server.

@@ -5,6 +5,10 @@ global:
   agreeToLicense: ""
   # Network License Manager: server host and port number, example: 27000@hostname
   licenseServer: 27000@hostname
+  # Override for private container registry, example: my-registry.example.com
+  images:
+    registry: ""
+    pullSecret: ""
   # Ingress settings (optional)
   ingressController:
     name: nginx
