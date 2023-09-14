@@ -1,17 +1,21 @@
-# Override Values for MATLAB Production Server Helm Chart
+# Values for MATLAB Production Server Helm Chart
 
 global:
   # MathWorks Cloud Reference Architecture License, example: "yes" (in quotes)
   agreeToLicense: ""
   # Network License Manager: server host and port number, example: 27000@hostname
   licenseServer: 27000@hostname
-  # Override for private container registry, example: my-registry.example.com
+  # Override for a private container registry, example: cr.example.com, cr-secret
   images:
     registry: ""
     pullSecret: ""
-  # Ingress settings (optional)
   ingressController:
+    # Nginx settings (optional)
     name: nginx
+    annotations:
+      nginx.ingress.kubernetes.io/affinity: "cookie"
+      nginx.ingress.kubernetes.io/load-balance: "round_robin"
+      nginx.ingress.kubernetes.io/proxy-read-timeout: "300"
     domainBase: matlabprodserver.mwcloudtest.com
 
 matlabProductionServerSettings:
@@ -35,8 +39,29 @@ matlabProductionServerSettings:
     # Azure storage account key secret name, example: azure-file-secret
     secretName: ""
     # =================================================================
+  # Maximum number of worker processes (per pod).
+  numWorkers: 2
+
+images:
+  productionServer:
+    registry: containers.mathworks.com
+    repository: matlab-production-server
+    tag: r2023b
+    variant: R2023b
+    pullPolicy: IfNotPresent
+    pullSecret: ""
+
+  matlabRuntime:
+    registry: containers.mathworks.com
+    repository: matlab-runtime
+    tag: r2023b
+    variant: R2023b
+    pullPolicy: IfNotPresent
+    pullSecret: ""
 
 deploymentSettings:
+  cpuRequest: "1"
+  memoryRequest: "2Gi"
   replicaCount: 1
   restartPolicy: Always
 
@@ -44,8 +69,11 @@ optionalSettings:
   Redis:
     # Redis service fully qualified name, example: redis.namespace.svc.cluster.local
     host: ""
+    auth: ""
     name: myRedis
+    port: 6379
     secretName: ""
+    secretKey: ""
 
   Prometheus:
     # Create a ServiceMonitor [monitoring.coreos.com/v1] for metrics discovery.
