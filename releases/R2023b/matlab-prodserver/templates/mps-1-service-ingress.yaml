@@ -35,6 +35,15 @@ metadata:
     {{ end }}
 spec:
   ingressClassName: {{ .Values.global.ingressController.name }}
+  {{ if .Values.global.ingressController.tls.enabled }}
+  tls:
+  - hosts:
+    - {{ .Values.global.ingressController.domainBase }}
+  {{- if .Values.global.ingressController.tls.secretName }}
+    secretName: {{ .Values.global.ingressController.tls.secretName }}
+  {{- end }}
+  {{ end }}
+
   rules:
   - host: {{ .Values.global.ingressController.domainBase }}
     http:

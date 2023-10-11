@@ -12,11 +12,15 @@ global:
   ingressController:
     # Nginx settings (optional)
     name: nginx
-    annotations:
-      nginx.ingress.kubernetes.io/affinity: "cookie"
-      nginx.ingress.kubernetes.io/load-balance: "round_robin"
-      nginx.ingress.kubernetes.io/proxy-read-timeout: "300"
+    annotations: {}
+
+    # Ingress host
     domainBase: matlabprodserver.mwcloudtest.com
+    # Ingress https (tls termination)
+    tls:
+      enabled: false
+      # Name of kubernetes.io/tls secret with certificate data
+      secretName: ""
 
 matlabProductionServerSettings:
   # CTF files are placed here for automatic deployment.
