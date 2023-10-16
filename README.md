@@ -25,11 +25,11 @@ Before starting, you need the following:
 * [Git™](https://git-scm.com/)
 * [Docker®](https://www.docker.com/)
 * Running [Kubernetes](https://kubernetes.io/) cluster that meets the following conditions: 
-    * Uses Kubernetes version 1.25 or later.
+    * Uses Kubernetes version 1.26 or later.
     * Each MATLAB Production Server container in the Kubernetes cluster requires at least 1 CPU core and 2 GiB RAM.
 * [kubectl](https://kubernetes.io/docs/reference/kubectl/overview/) command-line tool that can access your Kubernetes cluster
 * [Helm](https://helm.sh/) package manager to install Helm charts that contain preconfigured Kubernetes resources for MATLAB Production Server
-    * Uses Helm version v3.10.1 or later.
+    * Uses Helm version v3.13.0 or later.
 
 If you do not have a license, please contact your MathWorks representative [here](https://www.mathworks.com/company/aboutus/contact_us/contact_sales.html) or [request a trial license](https://www.mathworks.com/campaigns/products/trials.html?prodcode=PR). 
 
@@ -95,7 +95,7 @@ To specify mapping, in the top-level `values-overrides.yaml` file, under `matlab
 
 To specify the storage location for storing deployable archives, under `autoDeploy`, set `volumeType` to one of the following:
 
-* `"nfs"` &mdash; Store archives to a location on the network file system. Specify values for the `server` and `path` variables.
+* `"nfs"` &mdash; Store archives to a location on the network file system. Specify values for the `server` and `path` variables. Specify the hostname of your NFS server in the `server` variable and the location of your deployable archives in the `path` variable. For more information about the `nfs` option, see [Volumes](https://kubernetes.io/docs/concepts/storage/volumes/) in the Kubernetes documentation.
 * `"pvc"` &mdash; Store archives to a persistent volume by using a Persistent Volume Claim. Specify a value for the `claimName` variable. To use this option, you must have an existing Persistent Volume Claim that is already bound to its underlying storage volume.  
 * `"azurefileshare"`  &mdash; Store archives to a file share using Azure™ Files. Specify values for `shareName` and `secretName` variables. To use this option, you must have an existing file share and Kubernetes secret used to access the file share. For details about Azure file shares, see [Create and use a volume with Azure Files in Azure Kubernetes Service (AKS)](https://learn.microsoft.com/en-us/azure/aks/azure-csi-files-storage-provision) in the Azure documentation.
 
@@ -112,7 +112,7 @@ Before installing the chart, first set parameters that state your agreement to t
 Then, install the Helm chart for MATLAB Production Server by using the `helm install` command:
 
 ```
-helm install -f <path/to/values-overrides.yaml> [-n <k8s-namespace>] --generate-name <path/to/chart>
+helm install -f <path/to/values-overrides.yaml> [-n <k8s-namespace>] --generate-name <path/to/chart directory>
 ```
 
 After you install the chart, the pod takes a few minutes to initialize because the installation consists of approximately 10 GB of container images.
@@ -125,6 +125,7 @@ After the deployment is complete, upload the MATLAB Production Server deployable
 
 ### Manage External Access Using Ingress
 You can manage access to MATLAB Production Server by specifying an [Ingress](https://kubernetes.io/docs/concepts/services-networking/ingress/) controller. The Ingress controller also acts as a load balancer and is the preferred way to expose MATLAB Production Server services in production. This reference architecture assumes that you have an existing Ingress controller already running on the Kubernetes cluster. Specify controller options in the `ingressController` variable of the `values-overrides.yaml` file or use the default values.
+You can enable inbound HTTPS connections by using an Ingress controller TLS termination.
 
 ### Test Client Access Using Port Forwarding
 To test that the deployment was successful, first, use *port forwarding* to map the port that is running MATLAB Production Server inside the cluster (default = 9910) to a port that is available outside the cluster.
