@@ -95,7 +95,7 @@ To specify mapping, in the top-level `values-overrides.yaml` file, under `matlab
 
 To specify the storage location for storing deployable archives, under `autoDeploy`, set `volumeType` to one of the following:
 
-* `"nfs"` &mdash; Store archives to a location on the network file system. Specify values for the `server` and `path` variables. Specify the hostname of your NFS server in the `server` variable and the location of your deployable archives in the `path` variable. For details about NFS, see [Volumes](https://kubernetes.io/docs/concepts/storage/volumes/#nfs) in the Kubernetes documentation.
+* `"nfs"` &mdash; Store archives to a location on the network file system. Specify values for the `server` and `path` variables. Specify the hostname of your NFS server in the `server` variable and the location of your deployable archives in the `path` variable. For more information about the `nfs` option, see [Volumes](https://kubernetes.io/docs/concepts/storage/volumes/) in the Kubernetes documentation.
 * `"pvc"` &mdash; Store archives to a persistent volume by using a Persistent Volume Claim. Specify a value for the `claimName` variable. To use this option, you must have an existing Persistent Volume Claim that is already bound to its underlying storage volume.  
 * `"azurefileshare"`  &mdash; Store archives to a file share using Azure™ Files. Specify values for `shareName` and `secretName` variables. To use this option, you must have an existing file share and Kubernetes secret used to access the file share. For details about Azure file shares, see [Create and use a volume with Azure Files in Azure Kubernetes Service (AKS)](https://learn.microsoft.com/en-us/azure/aks/azure-csi-files-storage-provision) in the Azure documentation.
 
@@ -112,7 +112,7 @@ Before installing the chart, first set parameters that state your agreement to t
 Then, install the Helm chart for MATLAB Production Server by using the `helm install` command:
 
 ```
-helm install -f <path/to/values-overrides.yaml> [-n <k8s-namespace>] --generate-name <path/to/chart/directory>
+helm install -f <path/to/values-overrides.yaml> [-n <k8s-namespace>] --generate-name <path/to/chart directory>
 ```
 
 After you install the chart, the pod takes a few minutes to initialize because the installation consists of approximately 10 GB of container images.
