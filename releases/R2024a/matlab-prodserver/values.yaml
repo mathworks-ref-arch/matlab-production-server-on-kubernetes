@@ -10,6 +10,7 @@ global:
     registry: ""
     pullSecret: ""
   ingressController:
+    enabled: true  # Create 'Ingress' API object
     # Nginx settings (optional)
     name: nginx
     annotations: {}
