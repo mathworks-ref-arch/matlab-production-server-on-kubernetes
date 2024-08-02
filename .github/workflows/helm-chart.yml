@@ -17,7 +17,7 @@ jobs:
       contents: read
       packages: write
     env:
-      CHART_DIR: releases/${MATLAB_APP_VERSION}/matlab-prodserver
+      CHART_DIR: "releases/${{ env.MATLAB_APP_VERSION }}/matlab-prodserver"
 
     steps:
       - name: Check out the repo
@@ -28,6 +28,7 @@ jobs:
 
       - name: Check chart version
         run: |
+          echo S{CHART_DIR}
           grep 'version: ${{ env.HELM_CHART_VERSION }}' ${CHART_DIR}/Chart.yaml && grep 'appVersion: "${{ env.MATLAB_APP_VERSION }}"' ${CHART_DIR}/Chart.yaml
 
       - name: Package the chart
