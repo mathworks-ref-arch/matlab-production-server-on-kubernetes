@@ -29,7 +29,7 @@ jobs:
           CHART_DIR="releases/${{ env.MATLAB_APP_VERSION }}/matlab-prodserver" && cat ${CHART_DIR}/Chart.yaml
           echo "CHART_DIR=${CHART_DIR}" >> $GITHUB_ENV # Add to env if exists
 
-      - name: Check chart version
+      - name: Check chart versions
         run: |
           grep 'version: ${{ env.HELM_CHART_VERSION }}' ${CHART_DIR}/Chart.yaml && grep 'appVersion: "${{ env.MATLAB_APP_VERSION }}"' ${CHART_DIR}/Chart.yaml
 
