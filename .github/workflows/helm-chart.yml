@@ -8,7 +8,7 @@ on:
 
 env:
   HELM_CHART_VERSION: 1.1.0
-  MATLAB_APP_VERSION: "R2024a"
+  MATLAB_APP_VERSION: "R2024c"
 
 jobs:
   release-helm-chart:
