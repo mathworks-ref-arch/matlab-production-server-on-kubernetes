@@ -7,8 +7,8 @@ on:
       - Helm_artifacts
 
 env:
-  HELM_CHART_VERSION: 1.1.1
-  MATLAB_APP_VERSION: "R2024b"
+  HELM_CHART_VERSION: 1.1.0
+  MATLAB_APP_VERSION: "R2024a"
 
 jobs:
   release-helm-chart:
@@ -27,6 +27,7 @@ jobs:
       - name: Check chart version
         run: |
           CHART_DIR="releases/${{ env.MATLAB_APP_VERSION }}/matlab-prodserver"
+          cat ${CHART_DIR}/Chart.yaml
           grep 'version: ${{ env.HELM_CHART_VERSION }}' ${CHART_DIR}/Chart.yaml && grep 'appVersion: "${{ env.MATLAB_APP_VERSION }}"' ${CHART_DIR}/Chart.yaml
           echo "CHART_DIR=${CHART_DIR}" >> $GITHUB_ENV  # Add to env if correct version
 
