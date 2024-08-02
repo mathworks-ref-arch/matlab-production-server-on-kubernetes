@@ -16,6 +16,8 @@ jobs:
     permissions:
       contents: read
       packages: write
+    env:
+      CHART_DIR: releases/${{ env.MATLAB_APP_VERSION }}/matlab-prodserver
 
     steps:
       - name: Check out the repo
@@ -24,8 +26,12 @@ jobs:
       - name: Install Helm
         uses: azure/setup-helm@v4
 
+      - name: Check chart version
+        run: |
+          grep 'version: ${{ env.HELM_CHART_VERSION }}' ${CHART_DIR}/Chart.yaml && grep 'appVersion: "${{ env.MATLAB_APP_VERSION }}"' ${CHART_DIR}/Chart.yaml
+
       - name: Package the chart
-        run: helm package releases/${{ env.MATLAB_APP_VERSION }}/matlab-prodserver --version ${{ env.HELM_CHART_VERSION }} --app-version ${{ env.MATLAB_APP_VERSION }}
+        run: helm package ${CHART_DIR} --version ${{ env.HELM_CHART_VERSION }} --app-version ${{ env.MATLAB_APP_VERSION }}
 
       - name: Login to GitHub Container Registry
         run: echo ${{ secrets.CR_TOKEN }} | helm registry login ${{ secrets.MATHWORKS_REGISTRY }} --username ${{ secrets.CR_USER }} --password-stdin
