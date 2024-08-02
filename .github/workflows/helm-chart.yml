@@ -25,15 +25,13 @@ jobs:
         uses: azure/setup-helm@v4
 
       - name: Check chart version
-        id: check_chart
         run: |
           CHART_DIR="releases/${{ env.MATLAB_APP_VERSION }}/matlab-prodserver"
-          echo $CHART_DIR
           grep 'version: ${{ env.HELM_CHART_VERSION }}' ${CHART_DIR}/Chart.yaml && grep 'appVersion: "${{ env.MATLAB_APP_VERSION }}"' ${CHART_DIR}/Chart.yaml
-          echo "::set-output name=chart_dir::${CHART_DIR}"
+          echo "CHART_DIR=${CHART_DIR}" >> $GITHUB_ENV
 
       - name: Package the chart
-        run: helm package ${{ steps.check_chart.outouts.chart_dir }} --version ${{ env.HELM_CHART_VERSION }} --app-version ${{ env.MATLAB_APP_VERSION }}
+        run: helm package ${CHART_DIR} --version ${{ env.HELM_CHART_VERSION }} --app-version ${{ env.MATLAB_APP_VERSION }}
 
       - name: Login to GitHub Container Registry
         run: echo ${{ secrets.CR_TOKEN }} | helm registry login ${{ secrets.MATHWORKS_REGISTRY }} --username ${{ secrets.CR_USER }} --password-stdin
