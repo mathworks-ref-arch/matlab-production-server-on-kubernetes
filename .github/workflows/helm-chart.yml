@@ -8,7 +8,7 @@ on:
 
 env:
   HELM_CHART_VERSION: 1.1.1
-  MATLAB_APP_VERSION: "R2024b"
+  MATLAB_APP_VERSION: "R2024c"
 
 jobs:
   release-helm-chart:
@@ -24,12 +24,15 @@ jobs:
       - name: Install Helm
         uses: azure/setup-helm@v4
 
+      - name: Check that chart exists
+        run: |
+          CHART_DIR="releases/${{ env.MATLAB_APP_VERSION }}/matlab-prodserver"
+          cat ${CHART_DIR}/Chart.yaml
+          echo "CHART_DIR=${CHART_DIR}" >> $GITHUB_ENV # Add to env if exists
+
       - name: Check chart version
         run: |
-          echo "CHART_DIR=releases/${{ env.MATLAB_APP_VERSION }}/matlab-prodserver" >> $GITHUB_ENV
-          cat ${CHART_DIR}/Chart.yaml
           grep 'version: ${{ env.HELM_CHART_VERSION }}' ${CHART_DIR}/Chart.yaml && grep 'appVersion: "${{ env.MATLAB_APP_VERSION }}"' ${CHART_DIR}/Chart.yaml
-          # echo "CHART_DIR=${CHART_DIR}" >> $GITHUB_ENV  # Add to env if correct version
 
       - name: Package the chart
         run: helm package ${CHART_DIR} --version ${{ env.HELM_CHART_VERSION }} --app-version ${{ env.MATLAB_APP_VERSION }}
