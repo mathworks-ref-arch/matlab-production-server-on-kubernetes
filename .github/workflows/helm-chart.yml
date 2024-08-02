@@ -7,7 +7,7 @@ on:
       - Helm_artifacts
 
 env:
-  HELM_CHART_VERSION: 1.1.1
+  HELM_CHART_VERSION: 1.1.0
   MATLAB_APP_VERSION: "R2024b"
 
 jobs:
@@ -32,7 +32,8 @@ jobs:
 
       - name: Check chart version
         run: |
-          grep 'version: ${{ env.HELM_CHART_VERSION }}' ${CHART_DIR}/Chart.yaml && grep 'appVersion: "${{ env.MATLAB_APP_VERSION }}"' ${CHART_DIR}/Chart.yaml
+          # grep 'version: ${{ env.HELM_CHART_VERSION }}' ${CHART_DIR}/Chart.yaml && grep 'appVersion: "${{ env.MATLAB_APP_VERSION }}"' ${CHART_DIR}/Chart.yaml
+          grep 'version: ${{ env.HELM_CHART_VERSION }}' ${CHART_DIR}/Chart.yaml && grep 'appVersion: "R2024a"' ${CHART_DIR}/Chart.yaml
 
       - name: Package the chart
         run: helm package ${CHART_DIR} --version ${{ env.HELM_CHART_VERSION }} --app-version ${{ env.MATLAB_APP_VERSION }}
