@@ -33,6 +33,34 @@ Before starting, you need the following:
 
 If you do not have a license, please contact your MathWorks representative [here](https://www.mathworks.com/company/aboutus/contact_us/contact_sales.html) or [request a trial license](https://www.mathworks.com/campaigns/products/trials.html?prodcode=PR). 
 
+## Quick Start
+The Quick Start option is recommended for the following cases:
+* You are deploying MATLAB Production Server R2024b or newer
+* You don't require significant changes to the Helm chart
+* You are not running MATLAB Production server on Kubernetes as part of a CI/CD workflow
+For CI/CD workflows, we recommend that you cache docker images in your private container registry. For more complex workflows, use the [Deployment Steps](#Deployment-Steps)
+
+The Quick Start option only requires you to download a single file, rather than cloning the full GitHub repository. For more complex workflows, use the [Deployment Steps](#Deployment-Steps)
+
+1. Download the `values-overrides.yaml` file containing configuration options that apply across all release deployments from the MATLAB Production Server on Kubernetes GitHub repository. You can use the cURL command below or click the "Download Raw File" icon.
+    ```
+    curl -O https://raw.githubusercontent.com/mathworks-ref-arch/matlab-production-server-on-kubernetes/main/values-overrides.yaml
+    ```
+
+2. Complete the steps in [Provide Mapping for Deployable Archives](#Provide-Mapping-for-Deployable-Archives).
+
+3. Before installing the chart, first set parameters that state your agreement to the MathWorks cloud reference architecture license and specify the address of the network license manager. In the top-level values-overrides.yaml file, set these parameters:
+
+    To accept the license terms, set global > agreeToLicense to "yes".
+    To specify the address of the license server, set global > licenseServer using the format port_number@host. 
+
+    Next, install the Helm chart for MATLAB Production Server by using the following `helm install` command:
+
+        ```
+        helm install -f <path/to/values-overrides.yaml> [-n <k8s-namespace>] --generate-name oci://containers.mathworks.com/matlab-prodserver-k8s --version 1.1.0
+        ```
+4. After the deployment is complete, upload the MATLAB Production Server deployable archive to your network file server or Azure file share. All users must have read permission to the deployable archive.
+
 ## Deployment Steps
 ### Clone GitHub® Repository that Contains Helm Chart
 The MATLAB Production Server on Kubernetes GitHub repository contains Helm charts that reference Ubuntu-based Docker container images for MATLAB Production Server deployment.
