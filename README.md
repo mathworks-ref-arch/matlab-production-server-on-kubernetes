@@ -33,6 +33,32 @@ Before starting, you need the following:
 
 If you do not have a license, please contact your MathWorks representative [here](https://www.mathworks.com/company/aboutus/contact_us/contact_sales.html) or [request a trial license](https://www.mathworks.com/campaigns/products/trials.html?prodcode=PR). 
 
+## Quick Start
+For simple workflows that only require one instance of MATLAB Production Server running in a Kubernetes cluster, use the Quick Start option. This option only requires you to download a single file, rather than cloning the full GitHub repository. For more complex workflows, use the [Deployment Steps](#Deployment-Steps)
+
+1. Download the `values-overrides.yaml` file containing configuration options that apply across all release deployments from the MATLAB Production Server on Kubernetes GitHub repository. You can use the cURL command below or click the "Download Raw File" icon.
+    ```
+    curl -O https://raw.githubusercontent.com/mathworks-ref-arch/matlab-production-server-on-kubernetes/main/values-overrides.yaml
+    ```
+
+2. Proceed to [Pull Container Images for MATLAB Production Server and MATLAB Runtime](#Pull-Container-Images-for-MATLAB-Production-Server-and-MATLAB-Runtime) in [Deployment Steps](Deployment-Steps).
+
+3. When you reach the [Install Helm Chart](#Install-Helm-Chart) step, install the Helm chart for MATLAB Production Server by using the following `helm install` command:
+
+    ```
+    helm install -f <path/to/values-overrides.yaml> [-n <k8s-namespace>] --generate-name oci://pdr-test1.mathworks.com/matlab-prodserver-k8s --version <version-number-from-table>
+    ```
+    Use the version from the table below that corresponds to your release of MATLAB Production Server.
+
+    | Release     | Version |
+    | ------------- | ------------- |
+    | R2024b      | 1.1.0 |
+    | R2024a      | 1.0.3 |
+    | R2023b      | 1.0.1 |
+    | R2023a      | 0.1.3 |
+    | R2022b      | 0.1.2 |
+    | R2022a      | 0.1.1 |
+
 ## Deployment Steps
 ### Clone GitHub® Repository that Contains Helm Chart
 The MATLAB Production Server on Kubernetes GitHub repository contains Helm charts that reference Ubuntu-based Docker container images for MATLAB Production Server deployment.
