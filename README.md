@@ -25,13 +25,41 @@ Before starting, you need the following:
 * [Git™](https://git-scm.com/)
 * [Docker®](https://www.docker.com/)
 * Running [Kubernetes](https://kubernetes.io/) cluster that meets the following conditions: 
-    * Uses Kubernetes version 1.27 or later.
+    * Uses Kubernetes version 1.28 or later.
     * Each MATLAB Production Server container in the Kubernetes cluster requires at least 1 CPU core and 2 GiB RAM.
 * [kubectl](https://kubernetes.io/docs/reference/kubectl/overview/) command-line tool that can access your Kubernetes cluster
 * [Helm](https://helm.sh/) package manager to install Helm charts that contain preconfigured Kubernetes resources for MATLAB Production Server
-    * Uses Helm version v3.13.0 or later.
+    * Uses Helm version v3.14 or later.
 
 If you do not have a license, please contact your MathWorks representative [here](https://www.mathworks.com/company/aboutus/contact_us/contact_sales.html) or [request a trial license](https://www.mathworks.com/campaigns/products/trials.html?prodcode=PR). 
+
+## Quick Start
+The Quick Start option is recommended for the following cases:
+* You are deploying MATLAB Production Server R2024b or newer
+* You don't require significant changes to the Helm chart
+* You are not running MATLAB Production server on Kubernetes as part of a CI/CD workflow
+For CI/CD workflows, we recommend that you cache docker images in your private container registry. For more complex workflows, use the [Deployment Steps](#Deployment-Steps)
+
+The Quick Start option only requires you to download a single file, rather than cloning the full GitHub repository. For more complex workflows, use the [Deployment Steps](#Deployment-Steps)
+
+1. Download the `values-overrides.yaml` file containing configuration options that apply across all release deployments from the MATLAB Production Server on Kubernetes GitHub repository. You can use the cURL command below or click the "Download Raw File" icon.
+    ```
+    curl -O https://raw.githubusercontent.com/mathworks-ref-arch/matlab-production-server-on-kubernetes/main/values-overrides.yaml
+    ```
+
+2. Complete the steps in [Provide Mapping for Deployable Archives](#Provide-Mapping-for-Deployable-Archives).
+
+3. Before installing the chart, first set parameters that state your agreement to the MathWorks cloud reference architecture license and specify the address of the network license manager. In the top-level values-overrides.yaml file, set these parameters:
+
+    To accept the license terms, set global > agreeToLicense to "yes".
+    To specify the address of the license server, set global > licenseServer using the format port_number@host. 
+
+    Next, install the Helm chart for MATLAB Production Server by using the following `helm install` command:
+
+        ```
+        helm install -f <path/to/values-overrides.yaml> [-n <k8s-namespace>] --generate-name oci://containers.mathworks.com/matlab-prodserver-k8s --version 1.1.0
+        ```
+4. After the deployment is complete, upload the MATLAB Production Server deployable archive to your network file server or Azure file share. All users must have read permission to the deployable archive.
 
 ## Deployment Steps
 ### Clone GitHub® Repository that Contains Helm Chart
@@ -43,7 +71,7 @@ The MATLAB Production Server on Kubernetes GitHub repository contains Helm chart
     ```
     This repository includes Helm chart folders for each supported MATLAB Production Server release and a `values-overrides.yaml` file containing configuration options that apply across all release deployments.
 
-2. Navigate to the Helm chart folder for the release you want to use. Replace `<release>` with the release version, for example, `R2024a`.
+2. Navigate to the Helm chart folder for the release you want to use. Replace `<release>` with the release version, for example, `R2024b`.
     ```
     cd matlab-production-server-on-kubernetes/releases/<release>/matlab-prodserver
     ```
@@ -60,7 +88,7 @@ The MATLAB Production Server on Kubernetes GitHub repository contains Helm chart
     ```
     * `containers.mathworks.com` is the name of the container registry.
     * `matlab-production-server` is the name of the repository.
-    * `<release-tag>` is the tag name of the MATLAB Production Server release, for example, `r2024a`.
+    * `<release-tag>` is the tag name of the MATLAB Production Server release, for example, `r2024b`.
 
     The `values.yaml` file specifies these values in the `productionServer` section, in the `registry`, `repository`, and `tag` variables, respectively. 
 
@@ -71,7 +99,7 @@ The MATLAB Production Server on Kubernetes GitHub repository contains Helm chart
     ```
     * `containers.mathworks.com` is the name of the container registry.
     * `matlab-runtime` is the name of the repository.
-    * `<release-tag>` is the tag name of the MATLAB Runtime release. Update this value to the release version of the MATLAB Runtime you are using, for example, `r2024a`. MATLAB Production Server supports MATLAB Runtime versions up to six releases back from the MATLAB Production Server version you are using.
+    * `<release-tag>` is the tag name of the MATLAB Runtime release. Update this value to the release version of the MATLAB Runtime you are using, for example, `r2024b`. MATLAB Production Server supports MATLAB Runtime versions up to six releases back from the MATLAB Production Server version you are using.
 
     The `values.yaml` file specifies these values in the `matlabRuntime` section, in the `registry`, `repository`, and `tag` variables, respectively.  
 

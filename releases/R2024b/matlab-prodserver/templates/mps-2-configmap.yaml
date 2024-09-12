@@ -9,7 +9,7 @@ data:
   main_config: |
     --http 9910
     --ssl-verify-peer-mode no-verify-peer
-    --ssl-protocols TLSv1.1,TLSv1.2
+    --ssl-protocols TLSv1.2
     --ssl-ciphers ALL
     --mcr-root /opt/matlabruntime/{{ .Values.images.matlabRuntime.variant }}
     --num-workers {{ .Values.matlabProductionServerSettings.numWorkers | default 1 }}
@@ -42,6 +42,7 @@ data:
     --server-memory-threshold-overflow-action purge_responses
     --enable-discovery
     --enable-metrics
+    --routes-file ./config/routes.json
 
   {{- if .Values.optionalSettings.Redis.host }}
   mps_cache_config: |
@@ -49,8 +50,18 @@ data:
         {"{{ .Values.optionalSettings.Redis.name }}": 
             {"Provider":"Redis",
             "Host":{{ .Values.optionalSettings.Redis.host | quote }},
-            "Port":{{ .Values.optionalSettings.Redis.port | default 6379 }}}
+            "Port":{{ .Values.optionalSettings.Redis.port | default 6379 }}
+          {{- if .Values.optionalSettings.Redis.auth }}
+            ,"Key":{{ .Values.optionalSettings.Redis.auth | quote }}
+          {{- end }}
+            }
         }
     }
   {{- end }}
+
+  routes.json: |
+    {
+      "version": "1.0.0",
+      "pathmap": []
+    }
 

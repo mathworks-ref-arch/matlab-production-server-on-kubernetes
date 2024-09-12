@@ -5,17 +5,28 @@ global:
   agreeToLicense: ""
   # Network License Manager: server host and port number, example: 27000@hostname
   licenseServer: 27000@hostname
+  # Override for a private container registry, example: cr.example.com, cr-secret
+  images:
+    registry: ""
+    pullSecret: ""
   ingressController:
+    enabled: false  # Create 'Ingress' API object
     # Nginx settings (optional)
     name: nginx
-    annotations:
-      nginx.ingress.kubernetes.io/load-balance: "round_robin"
+    annotations: {}
+
+    # Ingress host
     domainBase: matlabprodserver.mwcloudtest.com
+    # Ingress https (tls termination)
+    tls:
+      enabled: false
+      # Name of kubernetes.io/tls secret with certificate data
+      secretName: ""
 
 matlabProductionServerSettings:
   # CTF files are placed here for automatic deployment.
   autoDeploy:
-    # Inline mount options: hostpath, nfs, azurefileshare, empty (default)
+    # Inline mount options: hostpath, nfs, pvc, azurefileshare, empty (default)
     volumeType: "empty"
     # Node mount dir, example: /mnt/share/autodeploy
     hostpath: ""
@@ -24,6 +35,9 @@ matlabProductionServerSettings:
     server: ""
     # NFS subpath, example: /vmgr/sandbox/share/autodeploy
     path: ""
+    # =================================================================
+    # Persistent-Volume-Claim name, example: autodeploy-pv-claim
+    claimName: ""
     # =================================================================
     # Azure storage account file share name, example: auto-deploy-share
     shareName: ""
@@ -37,16 +51,16 @@ images:
   productionServer:
     registry: containers.mathworks.com
     repository: matlab-production-server
-    tag: r2021b
-    variant: R2021b
+    tag: r2024b
+    variant: R2024b
     pullPolicy: IfNotPresent
     pullSecret: ""
 
   matlabRuntime:
     registry: containers.mathworks.com
     repository: matlab-runtime
-    tag: r2021b
-    variant: v911
+    tag: r2024b
+    variant: R2024b
     pullPolicy: IfNotPresent
     pullSecret: ""
 
@@ -58,6 +72,18 @@ deploymentSettings:
 
 optionalSettings:
   Redis:
-    host: {}
+    # Redis service fully qualified name, example: redis.namespace.svc.cluster.local
+    host: ""
+    auth: ""
     name: myRedis
+    port: 6379
+    secretName: ""
+    secretKey: ""
 
+  Prometheus:
+    # Create a ServiceMonitor [monitoring.coreos.com/v1] for metrics discovery.
+    # Requires Prometheus and Prometheus Operator (CRDs) to be pre-installed.
+    enabled: false
+    # Helm release name or app.kubernetes.io/part-of label of Prometheus stack.
+    # ServiceMonitor needs to match on this value (if Prometheus is enabled).
+    matchOn: prometheus
