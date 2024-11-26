@@ -7,8 +7,8 @@ on:
       - Helm_artifacts
 
 env:
-  HELM_CHART_VERSION: 1.1.0
-  MATLAB_APP_VERSION: "R2024b"
+  HELM_CHART_VERSION: 1.2.0
+  MATLAB_APP_VERSION: "R2025a"
 
 jobs:
   release-helm-chart:
