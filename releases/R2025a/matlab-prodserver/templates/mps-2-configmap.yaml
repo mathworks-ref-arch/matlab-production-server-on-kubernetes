@@ -24,7 +24,7 @@ data:
     --log-rotation-size 100MB
     --log-archive-root ./old_logs
     --log-archive-max-size 1GB
-    --log-root ./log
+    {{ ternary "--log-root ./log" "" .Values.matlabProductionServerSettings.localFileLogging }}
     --log-stdout
     --license {{ .Values.global.licenseServer | default "27000@hostname" }}
     --license-grace-period 2:30

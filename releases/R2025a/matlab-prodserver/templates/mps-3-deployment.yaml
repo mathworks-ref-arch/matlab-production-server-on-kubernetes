@@ -98,6 +98,11 @@ spec:
         - -c
         - "cp -r /opt/matlabruntime/* /mnt/"
 
+        resources:
+          limits:
+            cpu: "1"
+            memory: "8Gi"
+
         volumeMounts:
         - name: mcr-root
           mountPath: "/mnt"

@@ -46,6 +46,9 @@ matlabProductionServerSettings:
     # =================================================================
   # Maximum number of worker processes (per pod).
   numWorkers: 2
+  # ----------------------------------------------------
+  # Log to pod-local file-system (in addition to stdout)
+  localFileLogging: false
 
 images:
   productionServer:
