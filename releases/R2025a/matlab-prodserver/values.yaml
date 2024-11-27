@@ -46,6 +46,49 @@ matlabProductionServerSettings:
     # =================================================================
   # Maximum number of worker processes (per pod).
   numWorkers: 2
+  #
+  # CTF Access Control (OAuth2)
+  # https://www.mathworks.com/help/mps/server/access_control.html
+  # -------------------------------------------------------------
+  accessControl:
+    enabled: false
+    identityProvider: |-
+      {
+        "version": "1.0.0",
+        "jwtIssuer": "URL of the authorization server that issued the JWT",
+        "appId": "String representing the application ID of the client",
+        "jwksUri": "URL of the authorization server public keys",
+        "jwksStrictSSL": false,
+        "jwksTimeOut": 120,
+        "userAttributeName": "email",
+        "groupAttributeName": "groups"
+      }
+    policyRules: |-
+      {
+        "version": "1.0.0",
+        "policy" : [
+          {
+            "id": "policy1",
+            "description": "Access Control policy for MATLAB Production Server",
+            "rule": [
+              {
+                "id": "rule1",
+                "description": "Users that can execute/modify any deployable archive",
+                "subject": { "users": ["user1@example.com", "user2@example.com"] },
+                "resource": { "ctf": ["*"] },
+                "action": ["execute", "modify"]
+              },
+              {
+                "id": "rule2",
+                "description": "Groups that can execute a specific deployable archive",
+                "subject": { "groups": ["aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"] },
+                "resource": { "ctf": ["myModel"] },
+                "action": ["execute"]
+              }
+            ]
+          }
+        ]
+      }
   # ----------------------------------------------------
   # Log to pod-local file-system (in addition to stdout)
   localFileLogging: false

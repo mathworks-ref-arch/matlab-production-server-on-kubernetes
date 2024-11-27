@@ -43,6 +43,15 @@ data:
     --enable-discovery
     --enable-metrics
     --routes-file ./config/routes.json
+  {{- if .Values.matlabProductionServerSettings.accessControl.enabled }}
+    --access-control-provider OAuth2
+    --access-control-config ./config/jwt_idp.json
+    --access-control-policy ./config/ac_policy.json
+
+  jwt_idp.json: {{ .Values.matlabProductionServerSettings.accessControl.identityProvider | quote }}
+
+  ac_policy.json: {{ .Values.matlabProductionServerSettings.accessControl.policyRules | quote }}
+  {{- end }}
 
   {{- if .Values.optionalSettings.Redis.host }}
   mps_cache_config: |
