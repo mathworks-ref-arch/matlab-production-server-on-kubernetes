@@ -31,7 +31,7 @@ matlabProductionServerSettings:
   # CTF files are placed here for automatic deployment.
   autoDeploy:
     # Enable RESTful API for management of CTF 'Deployable Archives'
-    archivesApi:
+    archivesApi:  #  Since R2025a
       enabled: false
       storage: "4Gi"
     # _OR_
@@ -57,7 +57,7 @@ matlabProductionServerSettings:
   # CTF Access Control (OAuth2)
   # https://www.mathworks.com/help/mps/server/access_control.html
   # -------------------------------------------------------------
-  accessControl:
+  accessControl:  #  Since R2025a
     enabled: false
   # -------------------------------------------------------------
     identityProvider: |-
