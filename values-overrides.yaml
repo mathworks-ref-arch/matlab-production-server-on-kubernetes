@@ -30,6 +30,11 @@ global:
 matlabProductionServerSettings:
   # CTF files are placed here for automatic deployment.
   autoDeploy:
+    # Enable RESTful API for management of CTF 'Deployable Archives'
+    archivesApi:
+      enabled: false
+      storage: "4Gi"
+    # _OR_
     # Inline mount options: hostpath, nfs, pvc, azurefileshare, empty (default)
     volumeType: "empty"
     # Node mount dir, example: /mnt/share/autodeploy
@@ -48,6 +53,52 @@ matlabProductionServerSettings:
     # Azure storage account key secret name, example: azure-file-secret
     secretName: ""
     # =================================================================
+
+  # CTF Access Control (OAuth2)
+  # https://www.mathworks.com/help/mps/server/access_control.html
+  # -------------------------------------------------------------
+  accessControl:
+    enabled: false
+  # -------------------------------------------------------------
+    identityProvider: |-
+      {
+        "version": "1.0.0",
+        "jwtIssuer": "URL of the authorization server that issued the JWT",
+        "appId": "String representing the application ID of the client",
+        "jwksUri": "URL of the authorization server public keys",
+        "jwksStrictSSL": false,
+        "jwksTimeOut": 120,
+        "userAttributeName": "email",
+        "groupAttributeName": "groups"
+      }
+  # -------------------------------------------------------------
+    policyRules: |-
+      {
+        "version": "1.0.0",
+        "policy" : [
+          {
+            "id": "policy1",
+            "description": "Access Control policy for MATLAB Production Server",
+            "rule": [
+              {
+                "id": "rule1",
+                "description": "Users that can execute/modify any deployable archive",
+                "subject": { "users": ["user1@example.com", "user2@example.com"] },
+                "resource": { "ctf": ["*"] },
+                "action": ["execute", "modify"]
+              },
+              {
+                "id": "rule2",
+                "description": "Groups that can execute a specific deployable archive",
+                "subject": { "groups": ["aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"] },
+                "resource": { "ctf": ["myModel"] },
+                "action": ["execute"]
+              }
+            ]
+          }
+        ]
+      }
+  # -------------------------------------------------------------
 
 deploymentSettings:
   replicaCount: 1
