@@ -174,7 +174,7 @@ The default server configuration properties are stored in a [ConfigMap](https://
 
 
 ## Execute Deployed Functions
-To evaluate MATLAB functions deployed on the server, see [Client Programming](https://www.mathworks.com/help/mps/client-programming.html). Starting in R2022a, asynchronous request execution is supported, in addition to existing support for synchronous request execution.
+To evaluate MATLAB functions deployed on the server, see [Client Programming](https://www.mathworks.com/help/mps/client-programming.html). Both synchronous and asynchronous request execution are supported.
 
 ## Request Enhancements
 

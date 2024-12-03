@@ -81,3 +81,17 @@ spec:
     path: /api/metrics
 {{ end }}
 
+---
+{{ if .Values.matlabProductionServerSettings.autoDeploy.archivesApi.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: dynamic-auto-deploy
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.matlabProductionServerSettings.autoDeploy.archivesApi.storage | default "10Gi" | quote }}
+{{ end }}
+

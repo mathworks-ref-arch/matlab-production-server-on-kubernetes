@@ -26,6 +26,10 @@ global:
 matlabProductionServerSettings:
   # CTF files are placed here for automatic deployment.
   autoDeploy:
+    # Enable RESTful API for management of CTF 'Deployable Archives'
+    archivesApi:
+      enabled: false
+      storage: "10Gi"
     # Inline mount options: hostpath, nfs, pvc, azurefileshare, empty (default)
     volumeType: "empty"
     # Node mount dir, example: /mnt/share/autodeploy

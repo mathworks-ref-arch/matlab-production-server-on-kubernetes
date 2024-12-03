@@ -128,7 +128,10 @@ spec:
         configMap:
           name: matlab-production-server-config
       - name: auto-deploy
-        {{- if eq .Values.matlabProductionServerSettings.autoDeploy.volumeType "hostpath" }}
+        {{- if .Values.matlabProductionServerSettings.autoDeploy.archivesApi.enabled }}
+        persistentVolumeClaim:
+          claimName: "dynamic-auto-deploy"
+        {{- else if eq .Values.matlabProductionServerSettings.autoDeploy.volumeType "hostpath" }}
         hostPath:
           path: {{ .Values.matlabProductionServerSettings.autoDeploy.hostpath }}
           type: Directory
