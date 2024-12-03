@@ -87,11 +87,14 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: dynamic-auto-deploy
+  namespace: {{ .Release.Namespace }}
+  labels:
+    release: {{ .Release.Name }}
 spec:
   accessModes:
   - ReadWriteOnce
   resources:
     requests:
-      storage: {{ .Values.matlabProductionServerSettings.autoDeploy.archivesApi.storage | default "10Gi" | quote }}
+      storage: {{ .Values.matlabProductionServerSettings.autoDeploy.archivesApi.storage | default "4Gi" | quote }}
 {{ end }}
 
