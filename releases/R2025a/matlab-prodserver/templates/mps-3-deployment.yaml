@@ -101,7 +101,7 @@ spec:
         resources:
           limits:
             cpu: "1"
-            memory: "8Gi"
+            memory: "4Gi"
 
         volumeMounts:
         - name: mcr-root
@@ -129,8 +129,12 @@ spec:
           name: matlab-production-server-config
       - name: auto-deploy
         {{- if .Values.matlabProductionServerSettings.autoDeploy.archivesApi.enabled }}
+        {{- if ne .Values.matlabProductionServerSettings.autoDeploy.archivesApi.writableStorageClaimName "" }}
         persistentVolumeClaim:
-          claimName: "dynamic-auto-deploy"
+          claimName: {{ .Values.matlabProductionServerSettings.autoDeploy.archivesApi.writableStorageClaimName }}
+        {{ else }}
+        emptyDir: {}
+        {{- end }}
         {{- else if eq .Values.matlabProductionServerSettings.autoDeploy.volumeType "hostpath" }}
         hostPath:
           path: {{ .Values.matlabProductionServerSettings.autoDeploy.hostpath }}

@@ -33,7 +33,7 @@ matlabProductionServerSettings:
     # Enable RESTful API for management of CTF 'Deployable Archives'
     archivesApi:  #  Since R2025a
       enabled: false
-      storage: "4Gi"
+      writableStorageClaimName: ""
     # _OR_
     # Inline mount options: hostpath, nfs, pvc, azurefileshare, empty (default)
     volumeType: "empty"
