@@ -19,6 +19,7 @@ spec:
       labels:
         app: mps
       annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/mps-2-configmap.yaml") . | sha256sum }}
         {{ if not .Values.optionalSettings.Prometheus.enabled }}
         prometheus.io/scrape: 'true'
         prometheus.io/path: '/api/metrics'
