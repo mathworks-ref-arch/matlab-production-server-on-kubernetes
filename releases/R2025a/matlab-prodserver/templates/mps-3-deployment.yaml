@@ -130,9 +130,9 @@ spec:
           name: matlab-production-server-config
       - name: auto-deploy
         {{- if .Values.matlabProductionServerSettings.autoDeploy.archivesApi.enabled }}
-        {{- if ne .Values.matlabProductionServerSettings.autoDeploy.archivesApi.writableStorageClaimName "" }}
+        {{- if ne .Values.matlabProductionServerSettings.autoDeploy.archivesApi.rwxClaimName "" }}
         persistentVolumeClaim:
-          claimName: {{ .Values.matlabProductionServerSettings.autoDeploy.archivesApi.writableStorageClaimName }}
+          claimName: {{ .Values.matlabProductionServerSettings.autoDeploy.archivesApi.rwxClaimName }}
         {{ else }}
         emptyDir: {}
         {{- end }}
