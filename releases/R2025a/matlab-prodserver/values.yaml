@@ -29,8 +29,10 @@ matlabProductionServerSettings:
     # Enable RESTful API for management of CTF 'Deployable Archives'
     archivesApi:
       enabled: false
-      # Persistent-Volume-Claim name (ReadWriteMany accessMode)
-      rwxClaimName: ""
+      createPVC: false
+      storageClassName: ""
+      accessMode: ReadWriteOnce
+      size: "4Gi"
     # _OR_
     # Inline mount options: hostpath, nfs, pvc, azurefileshare, empty (default)
     volumeType: "empty"

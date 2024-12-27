@@ -30,6 +30,9 @@ spec:
         runAsNonRoot: true
         runAsUser: 1001
         runAsGroup: 1001
+        {{- if .Values.matlabProductionServerSettings.autoDeploy.archivesApi.createPVC }}
+        fsGroup: 1001
+        {{- end }}
 
       containers:
       - name: mps
@@ -130,12 +133,17 @@ spec:
           name: matlab-production-server-config
       - name: auto-deploy
         {{- if .Values.matlabProductionServerSettings.autoDeploy.archivesApi.enabled }}
-        {{- if ne .Values.matlabProductionServerSettings.autoDeploy.archivesApi.rwxClaimName "" }}
+        # Valid options when archives API is enabled: createPVC: true / volumeType: pvc / empty
+        {{- if .Values.matlabProductionServerSettings.autoDeploy.archivesApi.createPVC }}
         persistentVolumeClaim:
-          claimName: {{ .Values.matlabProductionServerSettings.autoDeploy.archivesApi.rwxClaimName }}
+          claimName: dynamic-auto-deploy
+        {{- else if eq .Values.matlabProductionServerSettings.autoDeploy.volumeType "pvc" }}
+        persistentVolumeClaim:
+          claimName: {{ .Values.matlabProductionServerSettings.autoDeploy.claimName }}
         {{ else }}
         emptyDir: {}
         {{- end }}
+        # Valid options for predef static volume: hostpath / nfs / pvc / azurefileshare / empty
         {{- else if eq .Values.matlabProductionServerSettings.autoDeploy.volumeType "hostpath" }}
         hostPath:
           path: {{ .Values.matlabProductionServerSettings.autoDeploy.hostpath }}
