@@ -76,6 +76,8 @@ matlabProductionServerSettings:
         "userAttributeName": "email",
         "groupAttributeName": "groups"
       }
+  # Note: FQDNs configured in 'jwtIssuer' and 'jwksUri' above,
+  # must be reachable from within the Kubernetes cluster network.
   # -------------------------------------------------------------
     policyRules: |-
       {

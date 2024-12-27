@@ -35,10 +35,9 @@ If you do not have a license, please contact your MathWorks representative [here
 
 ## Quick Start
 The Quick Start option is recommended for the following cases:
-* You are deploying MATLAB Production Server R2024b or newer
-* You don't require significant changes to the Helm chart
-* You are not running MATLAB Production server on Kubernetes as part of a CI/CD workflow
-For CI/CD workflows, we recommend that you cache docker images in your private container registry. For more complex workflows, use the [Deployment Steps](#Deployment-Steps)
+* You are deploying MATLAB Production Server R2024b or newer.
+* You don't require significant changes to the Helm chart.
+* For CI/CD workflows, we recommend that you retag and cache docker images in your private container registry.
 
 The Quick Start option only requires you to download a single file, rather than cloning the full GitHub repository. For more complex workflows, use the [Deployment Steps](#Deployment-Steps)
 
