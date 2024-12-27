@@ -1,6 +1,9 @@
 #
 # MATLAB Production Server instance
 #
+{{- include "checkConditionVolumeType" . }}
+{{- include "checkConditionReplicaCount" . }}
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
