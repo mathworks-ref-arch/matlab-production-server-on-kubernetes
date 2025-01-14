@@ -28,12 +28,13 @@ global:
       secretName: ""
 
 matlabProductionServerSettings:
-  # CTF files are placed here for automatic deployment.
+  # CTF files are placed in this volume for automatic deployment.
   autoDeploy:
     # Enable RESTful API for management of CTF 'Deployable Archives'
     archivesApi:  #  Since R2025a
       enabled: false
-      createPVC: false  #  When dynamic volume provisioning is enabled.
+      createPVC: false  #  Enable when archivesApi is enabled and dynamic
+                        #  volume provisioning in enabled on K8s cluster.
       storageClassName: ""
       accessMode: ReadWriteOnce  #  ReadWriteMany when replicaCount > 1
       size: "4Gi"
@@ -76,8 +77,8 @@ matlabProductionServerSettings:
         "userAttributeName": "email",
         "groupAttributeName": "groups"
       }
-  # Note: FQDNs configured in 'jwtIssuer' and 'jwksUri' above,
-  # must be reachable from within the Kubernetes cluster network.
+  # Note: FQDNs configured in 'jwtIssuer' and 'jwksUri' above
+  #       MUST be reachable from within the K8s cluster network.
   # -------------------------------------------------------------
     policyRules: |-
       {
