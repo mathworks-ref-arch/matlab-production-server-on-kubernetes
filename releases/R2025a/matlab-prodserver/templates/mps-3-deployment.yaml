@@ -1,6 +1,9 @@
 #
 # MATLAB Production Server instance
 #
+{{- include "checkConditionVolumeType" . }}
+{{- include "checkConditionReplicaCount" . }}
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -19,25 +22,38 @@ spec:
       labels:
         app: mps
       annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/mps-2-configmap.yaml") . | sha256sum }}
+        {{ if not .Values.optionalSettings.Prometheus.enabled }}
         prometheus.io/scrape: 'true'
         prometheus.io/path: '/api/metrics'
         prometheus.io/port: '9910'
+        {{ end }}
     spec:
       securityContext:
         runAsNonRoot: true
-        runAsUser: 1000
-        runAsGroup: 1000
+        runAsUser: 1001
+        runAsGroup: 1001
+        {{- if .Values.matlabProductionServerSettings.autoDeploy.archivesApi.createPVC }}
+        fsGroup: 1001
+        {{- end }}
 
       containers:
       - name: mps
-        image: {{ .Values.images.productionServer.registry }}/{{ .Values.images.productionServer.repository }}:{{ .Values.images.productionServer.tag }}
+        image: {{ .Values.global.images.registry | default .Values.images.productionServer.registry }}/{{ .Values.images.productionServer.repository }}:{{ .Values.images.productionServer.tag }}
         env:
         - name: AGREE_TO_MATHWORKS_SOFTWARE_LICENSE
-          value: {{ .Values.global.agreeToLicense | default "no" | lower | quote }}
+          value: {{ required "agreeToLicense must be set to \"yes\"." .Values.global.agreeToLicense | default "no" | lower | quote }}
         - name: AGREE_TO_MATLAB_RUNTIME_LICENSE
-          value: {{ .Values.global.agreeToLicense | default "no" | lower | quote }}
+          value: {{ required "agreeToLicense must be set to \"yes\"." .Values.global.agreeToLicense | default "no" | lower | quote }}
         - name: LD_LIBRARY_PATH
           value: "/opt/matlabruntime/{{ .Values.images.matlabRuntime.variant }}/runtime/glnxa64:/opt/matlabruntime/{{ .Values.images.matlabRuntime.variant }}/bin/glnxa64:/opt/matlabruntime/{{ .Values.images.matlabRuntime.variant }}/sys/os/glnxa64:/opt/matlabruntime/{{ .Values.images.matlabRuntime.variant }}/extern/bin/glnxa64:/opt/matlabruntime/{{ .Values.images.matlabRuntime.variant }}/sys/opengl/lib/glnxa64"
+          {{ if .Values.optionalSettings.Redis.secretName }}
+        - name: MPS_REDIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.optionalSettings.Redis.secretName }}
+              key: {{ .Values.optionalSettings.Redis.secretKey | default "redis-password" }}
+          {{ end }}
 
         ports:
         - containerPort: 9910
@@ -62,8 +78,8 @@ spec:
           exec:
             command:
             - ls
-            - /opt/matlabruntime/{{ .Values.images.matlabRuntime.variant }}/MCR_license.txt
-          initialDelaySeconds: 30
+            - /opt/matlabruntime/{{ .Values.images.matlabRuntime.variant }}/matlabruntime_license_agreement.pdf
+          initialDelaySeconds: 10
           periodSeconds: 30
 
         livenessProbe:
@@ -82,12 +98,17 @@ spec:
 
       initContainers:
       - name: matlab-runtime
-        image: {{ .Values.images.matlabRuntime.registry }}/{{ .Values.images.matlabRuntime.repository }}:{{ .Values.images.matlabRuntime.tag }}
+        image: {{ .Values.global.images.registry | default .Values.images.matlabRuntime.registry }}/{{ .Values.images.matlabRuntime.repository }}:{{ .Values.images.matlabRuntime.tag }}
 
         command:
         - /bin/sh
         - -c
         - "cp -r /opt/matlabruntime/* /mnt/"
+
+        resources:
+          limits:
+            cpu: "1"
+            memory: "4Gi"
 
         volumeMounts:
         - name: mcr-root
@@ -97,10 +118,13 @@ spec:
 
       restartPolicy: {{ .Values.deploymentSettings.restartPolicy }}
       imagePullSecrets:
+      {{- if .Values.global.images.pullSecret }}
+      - name: {{ .Values.global.images.pullSecret }}
+      {{- end }}
       {{- if .Values.images.productionServer.pullSecret }}
       - name: {{ .Values.images.productionServer.pullSecret }}
       {{- end }}
-      {{- if .Values.images.matlabRuntime.pullSecret }}
+      {{- if and .Values.images.matlabRuntime.pullSecret (ne .Values.images.matlabRuntime.pullSecret .Values.images.productionServer.pullSecret) }}
       - name: {{ .Values.images.matlabRuntime.pullSecret }}
       {{- end }}
 
@@ -111,7 +135,19 @@ spec:
         configMap:
           name: matlab-production-server-config
       - name: auto-deploy
-        {{- if eq .Values.matlabProductionServerSettings.autoDeploy.volumeType "hostpath" }}
+        {{- if .Values.matlabProductionServerSettings.autoDeploy.archivesApi.enabled }}
+        # Valid options when archives API is enabled: createPVC: true / volumeType: pvc / empty
+        {{- if .Values.matlabProductionServerSettings.autoDeploy.archivesApi.createPVC }}
+        persistentVolumeClaim:
+          claimName: dynamic-auto-deploy
+        {{- else if eq .Values.matlabProductionServerSettings.autoDeploy.volumeType "pvc" }}
+        persistentVolumeClaim:
+          claimName: {{ .Values.matlabProductionServerSettings.autoDeploy.claimName }}
+        {{ else }}
+        emptyDir: {}
+        {{- end }}
+        # Valid options for predef static volume: hostpath / nfs / pvc / azurefileshare / empty
+        {{- else if eq .Values.matlabProductionServerSettings.autoDeploy.volumeType "hostpath" }}
         hostPath:
           path: {{ .Values.matlabProductionServerSettings.autoDeploy.hostpath }}
           type: Directory
@@ -120,6 +156,9 @@ spec:
           server: {{ .Values.matlabProductionServerSettings.autoDeploy.server }}
           path: {{ .Values.matlabProductionServerSettings.autoDeploy.path }}
           readOnly: true
+        {{- else if eq .Values.matlabProductionServerSettings.autoDeploy.volumeType "pvc" }}
+        persistentVolumeClaim:
+          claimName: {{ .Values.matlabProductionServerSettings.autoDeploy.claimName }}
         {{- else if eq .Values.matlabProductionServerSettings.autoDeploy.volumeType "azurefileshare" }}
         azureFile:
           shareName: {{ .Values.matlabProductionServerSettings.autoDeploy.shareName }}

@@ -1,0 +1,18 @@
+{{ if .Values.matlabProductionServerSettings.autoDeploy.archivesApi.createPVC }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: dynamic-auto-deploy
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: mps
+    release: {{ .Release.Name }}
+spec:
+  accessModes:
+  - {{ .Values.matlabProductionServerSettings.autoDeploy.archivesApi.accessMode | default "ReadWriteOnce" }}
+  volumeMode: Filesystem
+  storageClassName: {{ .Values.matlabProductionServerSettings.autoDeploy.archivesApi.storageClassName | default "" }}
+  resources:
+    requests:
+      storage: {{ .Values.matlabProductionServerSettings.autoDeploy.archivesApi.size | default "4Gi" | quote }}
+{{ end }}

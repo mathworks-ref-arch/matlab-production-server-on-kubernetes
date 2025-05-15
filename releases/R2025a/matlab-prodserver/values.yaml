@@ -1,23 +1,19 @@
-# Override Values for MATLAB Production Server Helm Chart
+# Values for MATLAB Production Server Helm Chart
 
 global:
   # MathWorks Cloud Reference Architecture License, example: "yes" (in quotes)
   agreeToLicense: ""
   # Network License Manager: server host and port number, example: 27000@hostname
   licenseServer: 27000@hostname
-  # Override for private container registry, example: my-registry.example.com
+  # Override for a private container registry, example: cr.example.com, cr-secret
   images:
     registry: ""
     pullSecret: ""
-
-  # Ingress settings (optional)
   ingressController:
     enabled: false  # Create 'Ingress' API object
+    # Nginx settings (optional)
     name: nginx
-    annotations:
-      nginx.ingress.kubernetes.io/affinity: "cookie"
-      nginx.ingress.kubernetes.io/load-balance: "round_robin"
-      nginx.ingress.kubernetes.io/proxy-read-timeout: "300"
+    annotations: {}
 
     # Ingress host
     domainBase: matlabprodserver.mwcloudtest.com
@@ -28,19 +24,17 @@ global:
       secretName: ""
 
 matlabProductionServerSettings:
-  # CTF files are placed in this volume for automatic deployment.
+  # CTF files are placed here for automatic deployment.
   autoDeploy:
     # Enable RESTful API for management of CTF 'Deployable Archives'
-    archivesApi:  #  Since R2025a
+    archivesApi:
       enabled: false
-      createPVC: false  #  Enable when archivesApi is enabled and dynamic
-                        #  volume provisioning in enabled on K8s cluster.
+      createPVC: false
       storageClassName: ""
-      accessMode: ReadWriteOnce  #  ReadWriteMany when replicaCount > 1
+      accessMode: ReadWriteOnce
       size: "4Gi"
     # _OR_
     # Inline mount options: hostpath, nfs, pvc, azurefileshare, empty (default)
-    # Note: archives API is supported with pvc and empty volume types.
     volumeType: "empty"
     # Node mount dir, example: /mnt/share/autodeploy
     hostpath: ""
@@ -51,7 +45,6 @@ matlabProductionServerSettings:
     path: ""
     # =================================================================
     # Persistent-Volume-Claim name, example: autodeploy-pv-claim
-    # If archives API is enabled, PVC Access-Mode should be RWO or RWX.
     claimName: ""
     # =================================================================
     # Azure storage account file share name, example: auto-deploy-share
@@ -59,13 +52,14 @@ matlabProductionServerSettings:
     # Azure storage account key secret name, example: azure-file-secret
     secretName: ""
     # =================================================================
-
+  # Maximum number of worker processes (per pod).
+  numWorkers: 2
+  #
   # CTF Access Control (OAuth2)
   # https://www.mathworks.com/help/mps/server/access_control.html
   # -------------------------------------------------------------
-  accessControl:  #  Since R2025a
+  accessControl:
     enabled: false
-  # -------------------------------------------------------------
     identityProvider: |-
       {
         "version": "1.0.0",
@@ -77,9 +71,6 @@ matlabProductionServerSettings:
         "userAttributeName": "email",
         "groupAttributeName": "groups"
       }
-  # Note: FQDNs configured in 'jwtIssuer' and 'jwksUri' above
-  #       MUST be reachable from within the K8s cluster network.
-  # -------------------------------------------------------------
     policyRules: |-
       {
         "version": "1.0.0",
@@ -106,9 +97,30 @@ matlabProductionServerSettings:
           }
         ]
       }
-  # -------------------------------------------------------------
+  # ----------------------------------------------------
+  # Log to pod-local file-system (in addition to stdout)
+  localFileLogging: false
+
+images:
+  productionServer:
+    registry: containers.mathworks.com
+    repository: matlab-production-server
+    tag: r2025a
+    variant: R2025a
+    pullPolicy: IfNotPresent
+    pullSecret: ""
+
+  matlabRuntime:
+    registry: containers.mathworks.com
+    repository: matlab-runtime
+    tag: r2025a
+    variant: R2025a
+    pullPolicy: IfNotPresent
+    pullSecret: ""
 
 deploymentSettings:
+  cpuRequest: "1"
+  memoryRequest: "2Gi"
   replicaCount: 1
   restartPolicy: Always
 
@@ -116,8 +128,11 @@ optionalSettings:
   Redis:
     # Redis service fully qualified name, example: redis.namespace.svc.cluster.local
     host: ""
+    auth: ""
     name: myRedis
+    port: 6379
     secretName: ""
+    secretKey: ""
 
   Prometheus:
     # Create a ServiceMonitor [monitoring.coreos.com/v1] for metrics discovery.
