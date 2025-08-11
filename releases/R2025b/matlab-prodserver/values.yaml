@@ -1,0 +1,143 @@
+# Values for MATLAB Production Server Helm Chart
+
+global:
+  # MathWorks Cloud Reference Architecture License, example: "yes" (in quotes)
+  agreeToLicense: ""
+  # Network License Manager: server host and port number, example: 27000@hostname
+  licenseServer: 27000@hostname
+  # Override for a private container registry, example: cr.example.com, cr-secret
+  images:
+    registry: ""
+    pullSecret: ""
+  ingressController:
+    enabled: false  # Create 'Ingress' API object
+    # Nginx settings (optional)
+    name: nginx
+    annotations: {}
+
+    # Ingress host
+    domainBase: matlabprodserver.mwcloudtest.com
+    # Ingress https (tls termination)
+    tls:
+      enabled: false
+      # Name of kubernetes.io/tls secret with certificate data
+      secretName: ""
+
+matlabProductionServerSettings:
+  # CTF files are placed here for automatic deployment.
+  autoDeploy:
+    # Enable RESTful API for management of CTF 'Deployable Archives'
+    archivesApi:
+      enabled: false
+      createPVC: false
+      storageClassName: ""
+      accessMode: ReadWriteOnce
+      size: "4Gi"
+    # _OR_
+    # Inline mount options: hostpath, nfs, pvc, azurefileshare, empty (default)
+    volumeType: "empty"
+    # Node mount dir, example: /mnt/share/autodeploy
+    hostpath: ""
+    # =================================================================
+    # NFS server, example: server-sb08-nfs
+    server: ""
+    # NFS subpath, example: /vmgr/sandbox/share/autodeploy
+    path: ""
+    # =================================================================
+    # Persistent-Volume-Claim name, example: autodeploy-pv-claim
+    claimName: ""
+    # =================================================================
+    # Azure storage account file share name, example: auto-deploy-share
+    shareName: ""
+    # Azure storage account key secret name, example: azure-file-secret
+    secretName: ""
+    # =================================================================
+  # Maximum number of worker processes (per pod).
+  numWorkers: 2
+  #
+  # CTF Access Control (OAuth2)
+  # https://www.mathworks.com/help/mps/server/access_control.html
+  # -------------------------------------------------------------
+  accessControl:
+    enabled: false
+    identityProvider: |-
+      {
+        "version": "1.0.0",
+        "jwtIssuer": "URL of the authorization server that issued the JWT",
+        "appId": "String representing the application ID of the client",
+        "jwksUri": "URL of the authorization server public keys",
+        "jwksStrictSSL": false,
+        "jwksTimeOut": 120,
+        "userAttributeName": "email",
+        "groupAttributeName": "groups"
+      }
+    policyRules: |-
+      {
+        "version": "1.0.0",
+        "policy" : [
+          {
+            "id": "policy1",
+            "description": "Access Control policy for MATLAB Production Server",
+            "rule": [
+              {
+                "id": "rule1",
+                "description": "Users that can execute/modify any deployable archive",
+                "subject": { "users": ["user1@example.com", "user2@example.com"] },
+                "resource": { "ctf": ["*"] },
+                "action": ["execute", "modify"]
+              },
+              {
+                "id": "rule2",
+                "description": "Groups that can execute a specific deployable archive",
+                "subject": { "groups": ["aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"] },
+                "resource": { "ctf": ["myModel"] },
+                "action": ["execute"]
+              }
+            ]
+          }
+        ]
+      }
+  # ----------------------------------------------------
+  # Log to pod-local file-system (in addition to stdout)
+  localFileLogging: false
+
+images:
+  productionServer:
+    registry: containers.mathworks.com
+    repository: matlab-production-server
+    tag: r2025b
+    variant: R2025b
+    pullPolicy: IfNotPresent
+    pullSecret: ""
+
+  matlabRuntime:
+    registry: containers.mathworks.com
+    repository: matlab-runtime
+    tag: r2025b
+    variant: R2025b
+    pullPolicy: IfNotPresent
+    pullSecret: ""
+
+deploymentSettings:
+  cpuRequest: "1"
+  memoryRequest: "2Gi"
+  replicaCount: 1
+  restartPolicy: Always
+
+optionalSettings:
+  Redis:
+    # Redis service fully qualified name, example: redis.namespace.svc.cluster.local
+    host: ""
+    auth: ""
+    name: myRedis
+    port: 6379
+    secretName: ""
+    secretKey: ""
+
+  Prometheus:
+    # Create a ServiceMonitor [monitoring.coreos.com/v1] for metrics discovery.
+    # Requires Prometheus and Prometheus Operator (CRDs) to be pre-installed.
+    enabled: false
+    # Helm release name or app.kubernetes.io/part-of label of Prometheus stack.
+    # ServiceMonitor needs to match on this value (if Prometheus is enabled).
+    matchOn: prometheus
