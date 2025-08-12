@@ -109,7 +109,7 @@ matlabProductionServerSettings:
   # -------------------------------------------------------------
 
 deploymentSettings:
-  # Uncomment to update resource utilization default values:
+  # Uncomment to update resources utilization default values:
   # cpuLimit: "1"
   # cpuRequest: "250m"
   # memoryLimit: "8Gi"

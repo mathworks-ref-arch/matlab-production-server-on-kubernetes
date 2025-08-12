@@ -71,6 +71,7 @@ spec:
           mountPath: "/opt/mpsinstance/auto_deploy"
         - name: mcr-root
           mountPath: "/opt/matlabruntime"
+          readOnly: true
         - name: mps-config
           mountPath: "/opt/mpsinstance/config"
 
