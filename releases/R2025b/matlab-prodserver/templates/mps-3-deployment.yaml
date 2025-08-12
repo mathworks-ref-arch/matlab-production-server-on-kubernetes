@@ -63,8 +63,8 @@ spec:
             cpu: {{ .Values.deploymentSettings.cpuRequest | default "1" | quote }}
             memory: {{ .Values.deploymentSettings.memoryRequest | default "2Gi" | quote }}
           limits:
-            cpu: {{ .Values.matlabProductionServerSettings.numWorkers | default "1" | quote }}
-            memory: "8Gi"
+            cpu: {{ .Values.deploymentSettings.cpuLimit | default "1" | quote }}
+            memory: {{ .Values.deploymentSettings.memoryLimit | default "8Gi" | quote }}
 
         volumeMounts:
         - name: auto-deploy
@@ -106,9 +106,12 @@ spec:
         - "cp -r /opt/matlabruntime/* /mnt/"
 
         resources:
+          requests:
+            cpu: {{ .Values.deploymentSettings.cpuRequest | default "1" | quote }}
+            memory: {{ .Values.deploymentSettings.memoryRequest | default "2Gi" | quote }}
           limits:
-            cpu: "1"
-            memory: "4Gi"
+            cpu: {{ .Values.deploymentSettings.cpuLimit | default "1" | quote }}
+            memory: {{ .Values.deploymentSettings.memoryLimit | default "8Gi" | quote }}
 
         volumeMounts:
         - name: mcr-root

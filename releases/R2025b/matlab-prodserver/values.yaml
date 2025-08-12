@@ -119,7 +119,9 @@ images:
     pullSecret: ""
 
 deploymentSettings:
-  cpuRequest: "1"
+  cpuLimit: "1"
+  cpuRequest: "250m"
+  memoryLimit: "8Gi"
   memoryRequest: "2Gi"
   replicaCount: 1
   restartPolicy: Always
