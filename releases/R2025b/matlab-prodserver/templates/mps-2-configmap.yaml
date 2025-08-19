@@ -10,7 +10,7 @@ data:
     --http 9910
     --ssl-verify-peer-mode no-verify-peer
     --ssl-protocols TLSv1.2,TLSv1.3
-    --ssl-ciphers ALL
+    --ssl-ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:DHE-RSA-CHACHA20-POLY1305
     --mcr-root /opt/matlabruntime/{{ .Values.images.matlabRuntime.variant }}
     --num-workers {{ .Values.matlabProductionServerSettings.numWorkers | default 1 }}
     --worker-restart-interval 12:00:00
