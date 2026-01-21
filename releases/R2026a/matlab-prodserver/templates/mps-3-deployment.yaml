@@ -163,6 +163,7 @@ spec:
         {{- else if eq .Values.matlabProductionServerSettings.autoDeploy.volumeType "pvc" }}
         persistentVolumeClaim:
           claimName: {{ .Values.matlabProductionServerSettings.autoDeploy.claimName }}
+          readOnly: true
         {{- else if eq .Values.matlabProductionServerSettings.autoDeploy.volumeType "azurefileshare" }}
         azureFile:
           shareName: {{ .Values.matlabProductionServerSettings.autoDeploy.shareName }}

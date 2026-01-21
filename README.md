@@ -25,7 +25,7 @@ Before starting, you need the following:
 * [Git™](https://git-scm.com/)
 * [Docker®](https://www.docker.com/)
 * Running [Kubernetes](https://kubernetes.io/) cluster that meets the following conditions: 
-    * Uses Kubernetes version 1.32 or later.
+    * Uses Kubernetes version 1.33 or later.
     * Each MATLAB Production Server container in the Kubernetes cluster requires at least 1 CPU core and 2 GiB RAM.
 * [kubectl](https://kubernetes.io/docs/reference/kubectl/overview/) command-line tool that can access your Kubernetes cluster
 * [Helm](https://helm.sh/) package manager to install Helm charts that contain preconfigured Kubernetes resources for MATLAB Production Server
@@ -55,7 +55,7 @@ The Quick Start option only requires you to download a single file, rather than 
 
     Next, install the Helm chart for MATLAB Production Server R2026a by using the following `helm install` command:
     ```
-    helm install -f <path/to/values-overrides.yaml> [-n <k8s-namespace>] --generate-name oci://containers.mathworks.com/matlab-prodserver-k8s --version 1.3.0
+    helm install -f <path/to/values-overrides.yaml> [-n <k8s-namespace>] --generate-name oci://containers.mathworks.com/matlab-prodserver-k8s --version 1.4.0
     ```
 
 4. After the deployment is complete, upload the MATLAB Production Server deployable archive to your network file server or Azure file share. All users must have read permission to the deployable archive.
