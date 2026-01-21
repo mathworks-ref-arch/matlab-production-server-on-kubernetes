@@ -1,6 +1,9 @@
 #
 # MATLAB Production Server instance
 #
+{{- include "checkConditionVolumeType" . }}
+{{- include "checkConditionReplicaCount" . }}
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -19,6 +22,7 @@ spec:
       labels:
         app: mps
       annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/mps-2-configmap.yaml") . | sha256sum }}
         {{ if not .Values.optionalSettings.Prometheus.enabled }}
         prometheus.io/scrape: 'true'
         prometheus.io/path: '/api/metrics'
@@ -27,8 +31,11 @@ spec:
     spec:
       securityContext:
         runAsNonRoot: true
-        runAsUser: 1000
-        runAsGroup: 1000
+        runAsUser: 1001
+        runAsGroup: 1001
+        {{- if .Values.matlabProductionServerSettings.autoDeploy.archivesApi.createPVC }}
+        fsGroup: 1001
+        {{- end }}
 
       containers:
       - name: mps
@@ -40,6 +47,13 @@ spec:
           value: {{ required "agreeToLicense must be set to \"yes\"." .Values.global.agreeToLicense | default "no" | lower | quote }}
         - name: LD_LIBRARY_PATH
           value: "/opt/matlabruntime/{{ .Values.images.matlabRuntime.variant }}/runtime/glnxa64:/opt/matlabruntime/{{ .Values.images.matlabRuntime.variant }}/bin/glnxa64:/opt/matlabruntime/{{ .Values.images.matlabRuntime.variant }}/sys/os/glnxa64:/opt/matlabruntime/{{ .Values.images.matlabRuntime.variant }}/extern/bin/glnxa64:/opt/matlabruntime/{{ .Values.images.matlabRuntime.variant }}/sys/opengl/lib/glnxa64"
+          {{ if .Values.optionalSettings.Redis.secretName }}
+        - name: MPS_REDIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.optionalSettings.Redis.secretName }}
+              key: {{ .Values.optionalSettings.Redis.secretKey | default "redis-password" }}
+          {{ end }}
 
         ports:
         - containerPort: 9910
@@ -49,14 +63,15 @@ spec:
             cpu: {{ .Values.deploymentSettings.cpuRequest | default "1" | quote }}
             memory: {{ .Values.deploymentSettings.memoryRequest | default "2Gi" | quote }}
           limits:
-            cpu: {{ .Values.matlabProductionServerSettings.numWorkers | default "1" | quote }}
-            memory: "8Gi"
+            cpu: {{ .Values.deploymentSettings.cpuLimit | default "1" | quote }}
+            memory: {{ .Values.deploymentSettings.memoryLimit | default "8Gi" | quote }}
 
         volumeMounts:
         - name: auto-deploy
           mountPath: "/opt/mpsinstance/auto_deploy"
         - name: mcr-root
           mountPath: "/opt/matlabruntime"
+          readOnly: true
         - name: mps-config
           mountPath: "/opt/mpsinstance/config"
 
@@ -91,6 +106,14 @@ spec:
         - -c
         - "cp -r /opt/matlabruntime/* /mnt/"
 
+        resources:
+          requests:
+            cpu: {{ .Values.deploymentSettings.cpuRequest | default "1" | quote }}
+            memory: {{ .Values.deploymentSettings.memoryRequest | default "2Gi" | quote }}
+          limits:
+            cpu: {{ .Values.deploymentSettings.cpuLimit | default "1" | quote }}
+            memory: {{ .Values.deploymentSettings.memoryLimit | default "8Gi" | quote }}
+
         volumeMounts:
         - name: mcr-root
           mountPath: "/mnt"
@@ -116,7 +139,19 @@ spec:
         configMap:
           name: matlab-production-server-config
       - name: auto-deploy
-        {{- if eq .Values.matlabProductionServerSettings.autoDeploy.volumeType "hostpath" }}
+        {{- if .Values.matlabProductionServerSettings.autoDeploy.archivesApi.enabled }}
+        # Valid options when archives API is enabled: createPVC: true / volumeType: pvc / empty
+        {{- if .Values.matlabProductionServerSettings.autoDeploy.archivesApi.createPVC }}
+        persistentVolumeClaim:
+          claimName: dynamic-auto-deploy
+        {{- else if eq .Values.matlabProductionServerSettings.autoDeploy.volumeType "pvc" }}
+        persistentVolumeClaim:
+          claimName: {{ .Values.matlabProductionServerSettings.autoDeploy.claimName }}
+        {{ else }}
+        emptyDir: {}
+        {{- end }}
+        # Valid options for predef static volume: hostpath / nfs / pvc / azurefileshare / empty
+        {{- else if eq .Values.matlabProductionServerSettings.autoDeploy.volumeType "hostpath" }}
         hostPath:
           path: {{ .Values.matlabProductionServerSettings.autoDeploy.hostpath }}
           type: Directory
