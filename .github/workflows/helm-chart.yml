@@ -40,5 +40,5 @@ jobs:
         run: echo ${{ secrets.CR_TOKEN }} | helm registry login ${{ secrets.MATHWORKS_REGISTRY }} --username ${{ secrets.CR_USER }} --password-stdin
 
       - name: Deploy the chart
-        run: helm push matlab-prodserver-k8s-${{ env.HELM_CHART_VERSION }}.tgz oci://${{ secrets.MATHWORKS_REGISTRY }}
+        run: helm push matlab-prodserver-k8s-${{ env.HELM_CHART_VERSION }}.tgz oci://${{ secrets.MATHWORKS_REGISTRY }}/{{ secrets.CR_USER }}
 
