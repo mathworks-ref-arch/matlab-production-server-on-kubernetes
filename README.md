@@ -30,7 +30,7 @@ Before starting, you need the following:
 * [kubectl](https://kubernetes.io/docs/reference/kubectl/overview/) command-line tool that can access your Kubernetes cluster
 * [Helm](https://helm.sh/) package manager to install Helm charts that contain preconfigured Kubernetes resources for MATLAB Production Server
     * Uses Helm version v3.17 or later.
-* Java® ⚠️  MATLAB Runtime will no longer include the Java® Runtime Environment (JRE™) in a future release.
+⚠️  MATLAB Runtime will no longer include the Java® Runtime Environment (JRE™) in a future release.
 
 If you do not have a license, please contact your MathWorks representative [here](https://www.mathworks.com/company/aboutus/contact_us/contact_sales.html) or [request a trial license](https://www.mathworks.com/campaigns/products/trials.html?prodcode=PR). 
 
