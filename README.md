@@ -25,11 +25,13 @@ Before starting, you need the following:
 * [Git™](https://git-scm.com/)
 * [Docker®](https://www.docker.com/)
 * Running [Kubernetes](https://kubernetes.io/) cluster that meets the following conditions: 
-    * Uses Kubernetes version 1.32 or later.
+    * Uses Kubernetes version 1.33 or later.
     * Each MATLAB Production Server container in the Kubernetes cluster requires at least 1 CPU core and 2 GiB RAM.
 * [kubectl](https://kubernetes.io/docs/reference/kubectl/overview/) command-line tool that can access your Kubernetes cluster
 * [Helm](https://helm.sh/) package manager to install Helm charts that contain preconfigured Kubernetes resources for MATLAB Production Server
     * Uses Helm version v3.17 or later.
+
+⚠️  MATLAB Runtime will no longer include the Java® Runtime Environment (JRE™) in a future release.
 
 If you do not have a license, please contact your MathWorks representative [here](https://www.mathworks.com/company/aboutus/contact_us/contact_sales.html) or [request a trial license](https://www.mathworks.com/campaigns/products/trials.html?prodcode=PR). 
 
@@ -53,9 +55,9 @@ The Quick Start option only requires you to download a single file, rather than 
     To accept the license terms, set global > agreeToLicense to "yes".
     To specify the address of the license server, set global > licenseServer using the format port_number@host. 
 
-    Next, install the Helm chart for MATLAB Production Server R2025b by using the following `helm install` command:
+    Next, install the Helm chart for MATLAB Production Server R2026a by using the following `helm install` command:
     ```
-    helm install -f <path/to/values-overrides.yaml> [-n <k8s-namespace>] --generate-name oci://containers.mathworks.com/matlab-prodserver-k8s --version 1.3.0
+    helm install -f <path/to/values-overrides.yaml> [-n <k8s-namespace>] --generate-name oci://containers.mathworks.com/matlab-prodserver-k8s --version 1.4.0
     ```
 
 4. After the deployment is complete, upload the MATLAB Production Server deployable archive to your network file server or Azure file share. All users must have read permission to the deployable archive.
@@ -70,7 +72,7 @@ The MATLAB Production Server on Kubernetes GitHub repository contains Helm chart
     ```
     This repository includes Helm chart folders for each supported MATLAB Production Server release and a `values-overrides.yaml` file containing configuration options that apply across all release deployments.
 
-2. Navigate to the Helm chart folder for the release you want to use. Replace `<release>` with the release version, for example, `R2025b`.
+2. Navigate to the Helm chart folder for the release you want to use. Replace `<release>` with the release version, for example, `R2026a`.
     ```
     cd matlab-production-server-on-kubernetes/releases/<release>/matlab-prodserver
     ```
@@ -87,7 +89,7 @@ The MATLAB Production Server on Kubernetes GitHub repository contains Helm chart
     ```
     * `containers.mathworks.com` is the name of the container registry.
     * `matlab-production-server` is the name of the repository.
-    * `<release-tag>` is the tag name of the MATLAB Production Server release, for example, `r2025b`.
+    * `<release-tag>` is the tag name of the MATLAB Production Server release, for example, `r2026a`.
 
     The `values.yaml` file specifies these values in the `productionServer` section, in the `registry`, `repository`, and `tag` variables, respectively. 
 
@@ -98,7 +100,7 @@ The MATLAB Production Server on Kubernetes GitHub repository contains Helm chart
     ```
     * `containers.mathworks.com` is the name of the container registry.
     * `matlab-runtime` is the name of the repository.
-    * `<release-tag>` is the tag name of the MATLAB Runtime release. Update this value to the release version of the MATLAB Runtime you are using, for example, `r2025b`. MATLAB Production Server supports MATLAB Runtime versions up to six releases back from the MATLAB Production Server version you are using.
+    * `<release-tag>` is the tag name of the MATLAB Runtime release. Update this value to the release version of the MATLAB Runtime you are using, for example, `r2026a`. MATLAB Production Server supports MATLAB Runtime versions up to six releases back from the MATLAB Production Server version you are using.
 
     The `values.yaml` file specifies these values in the `matlabRuntime` section, in the `registry`, `repository`, and `tag` variables, respectively.  
 
@@ -186,5 +188,5 @@ If you require assistance, contact [MathWorks Technical Support](https://www.mat
 
 ## License
 
-MATHWORKS CLOUD REFERENCE ARCHITECTURE LICENSE © 2025 The MathWorks, Inc.
+MATHWORKS CLOUD REFERENCE ARCHITECTURE LICENSE © 2026 The MathWorks, Inc.
 
