@@ -19,6 +19,7 @@ spec:
   type: ClusterIP
 
 ---
+{{- if .Values.global.ingressController.enabled }}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -55,6 +56,7 @@ spec:
             name: matlab-production-server
             port:
               number: 9910
+{{- end }}
 
 ---
 {{ if and (.Values.optionalSettings.Prometheus.enabled) (.Capabilities.APIVersions.Has "monitoring.coreos.com/v1/ServiceMonitor") }}
