@@ -31,8 +31,8 @@ Before starting, you need the following:
 * [Helm](https://helm.sh/) package manager to install Helm charts that contain preconfigured Kubernetes resources for MATLAB Production Server
     * Uses Helm version v3.17 or later.
 
-⚠️  Since R2026b, MATLAB Runtime no longer includes the Java® Runtime Environment (JRE™).<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If your MATLAB code requires Java to run, explore your options [here](https://www.mathworks.com/matlab-runtime-openjdk).
+⚠️  Since R2026b, MATLAB Runtime no longer includes the Java® Runtime Environment (JRE™).
+If your MATLAB code requires Java to run, explore your options [here](https://www.mathworks.com/matlab-runtime-openjdk).
 
 If you do not have a license, please contact your MathWorks representative [here](https://www.mathworks.com/company/aboutus/contact_us/contact_sales.html) or [request a trial license](https://www.mathworks.com/campaigns/products/trials.html?prodcode=PR). 
 
