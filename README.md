@@ -2,6 +2,9 @@
 
 The ```matlab-production-server-on-kubernetes``` repository contains utilities for using MATLAB® Production Server™ in a Kubernetes® cluster.  
 
+## Warning
+Starting in R2026b, MATLAB Production Server no longer includes the JRE™. If your deployed application uses Java functionality, for instance, by calling Java methods from MATLAB code or by connecting to databases using JDBC, you must manually configure MATLAB Production Server to use a supported external JRE or JRE or Java® Development Kit (JDK™).
+
 ## Introduction
 
 This guide helps you automate the process of running MATLAB
