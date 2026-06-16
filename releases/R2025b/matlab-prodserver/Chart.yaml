@@ -1,0 +1,5 @@
+apiVersion: v2
+appVersion: "R2025b"
+description: MATLAB Production Server Helm chart for Kubernetes
+name: matlab-prodserver-k8s
+version: 1.3.0
