@@ -183,11 +183,11 @@ After you install the chart, the pod takes a few minutes to initialize because t
 
 The deployment name is `deployment.apps/matlab-production-server`. You can use the [kubectl get](https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands#get) command to confirm that MATLAB Production Server is running. The name of the service that enables network access to the pod is `service/matlab-production-server`.
 
-### Step 6: Upload Deployable Archive
-After the deployment is complete, upload the MATLAB Production Server deployable archive to your network file server or Azure file share. All users must have read permission to the deployable archive.
-
 ## Common Tasks
 The following tasks can be performed at any time after the initial deployment is complete. They apply to both [Quick Start](#quick-start) and full [Deployment Steps](#deployment-steps) workflows.
+
+### Upload Deployable Archive
+After the deployment is complete, upload the MATLAB Production Server deployable archive to your network file server or Azure file share. All users must have read permission to the deployable archive.
 
 ### Manage External Access Using Ingress
 You can manage access to MATLAB Production Server by specifying an [Ingress](https://kubernetes.io/docs/concepts/services-networking/ingress/) controller. The Ingress controller also acts as a load balancer and is the preferred way to expose MATLAB Production Server services in production. This reference architecture assumes that you have an existing Ingress controller already running on the Kubernetes cluster. Specify controller options in the `ingressController` variable of the `values-overrides.yaml` file or use the default values.
