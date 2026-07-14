@@ -139,9 +139,7 @@ The MATLAB Production Server on Kubernetes GitHub repository contains Helm chart
 
     The `values.yaml` file specifies these values in the `matlabRuntime` section, in the `registry`, `repository`, and `tag` variables, respectively.  
 
-### Step 3: Upload Container Images to Private Registry *(Optional)*
-> This step is required only if your Kubernetes cluster cannot access containers.mathworks.com directly.
-
+### Step 3: Upload Container Images to Private Registry
 After you pull the MATLAB Production Server and MATLAB Runtime container images to your system, upload them to a private container registry that your Kubernetes cluster can access.
 
 1. Tag the images with information about your private registry by using [docker tag](https://docs.docker.com/engine/reference/commandline/tag/).
