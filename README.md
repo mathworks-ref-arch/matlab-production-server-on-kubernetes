@@ -24,7 +24,7 @@ For more information about Kubernetes, see the [Kubernetes documentation](https:
   4. [Provide Mapping for Deployable Archives](#step-4-provide-mapping-for-deployable-archives)
   5. [Install Helm Chart](#step-5-install-helm-chart)
 - [Common Tasks](#common-tasks)
-  - [Upload Deployable Archive](#step-6-upload-deployable-archive)
+  - [Upload Deployable Archive](#upload-deployable-archive)
   - [Manage External Access Using Ingress](#manage-external-access-using-ingress)
   - [Scale the Deployment](#scale-the-deployment)
   - [Test Client Access Using Port Forwarding](#test-client-access-using-port-forwarding)
