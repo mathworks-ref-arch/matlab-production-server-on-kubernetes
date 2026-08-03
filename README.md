@@ -323,6 +323,9 @@ kubectl scale deployment matlab-production-server --namespace=<k8s-namespace> --
 
 For more information, see [How can I troubleshoot license errors when using MATLAB Production Server on Kubernetes?](https://www.mathworks.com/matlabcentral/answers/2183724-how-can-i-troubleshoot-license-errors-when-using-matlab-production-server-on-kubernetes)
 
+#### Container Download Issues
+If you encounter issues downloading container images, see [Why am I encountering issues downloading containers for my MATLAB Production Server Kubernetes deployment?](https://uk.mathworks.com/matlabcentral/answers/2184529-why-am-i-encountering-issues-downloading-containers-for-my-matlab-production-server-kubernetes-deplo)
+
 #### Configuration Changes Not Taking Effect (R2024b and Earlier)
 In R2024b and earlier, updating the configuration does not automatically trigger pods to restart. You must manually restart all pods after making configuration changes. This has been fixed in R2025a and later.
 
