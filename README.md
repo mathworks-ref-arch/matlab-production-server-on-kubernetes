@@ -1,6 +1,6 @@
 # MATLAB Production Server in Kubernetes
 
-The ```matlab-production-server-on-kubernetes``` repository contains utilities for using MATLAB® Production Server™ in a Kubernetes® cluster.  
+The `matlab-production-server-on-kubernetes` repository contains utilities for using MATLAB® Production Server™ in a Kubernetes® cluster.
 
 ## Introduction
 
@@ -45,28 +45,29 @@ Before starting, you need the following:
 
 *   MATLAB Production Server license that meets the following conditions:
     * Linked to a [MathWorks Account](https://www.mathworks.com/mwaccount/).
-    * Concurrent license type. To check your license type, see [MathWorks License Center](https://www.mathworks.com/licensecenter/). 
+    * Concurrent license type. To check your license type, see [MathWorks License Center](https://www.mathworks.com/licensecenter/).
     * Configured to use a network license manager. The license manager must be accessible from the Kubernetes cluster where you deploy MATLAB Production Server but must not be installed in the cluster.
-*  Network access to the MathWorks container registry, containers.mathworks.com    
-* [Git™](https://git-scm.com/)
-* [Docker®](https://www.docker.com/)
-* Running [Kubernetes](https://kubernetes.io/) cluster that meets the following conditions: 
+*   Network access to the MathWorks container registry, `containers.mathworks.com`
+*   [Git™](https://git-scm.com/)
+*   [Docker®](https://www.docker.com/)
+*   Running [Kubernetes](https://kubernetes.io/) cluster that meets the following conditions:
     * Uses Kubernetes version 1.33 or later.
     * Each MATLAB Production Server container in the Kubernetes cluster requires at least 1 CPU core and 2 GiB RAM.
-* [kubectl](https://kubernetes.io/docs/reference/kubectl/overview/) command-line tool that can access your Kubernetes cluster
-* [Helm](https://helm.sh/) package manager to install Helm charts that contain preconfigured Kubernetes resources for MATLAB Production Server
+*   [kubectl](https://kubernetes.io/docs/reference/kubectl/overview/) command-line tool that can access your Kubernetes cluster
+*   [Helm](https://helm.sh/) package manager to install Helm charts that contain preconfigured Kubernetes resources for MATLAB Production Server
     * Uses Helm version v3.17 or later.
 
 ⚠️  Since R2026b, MATLAB Runtime no longer includes the Java® Runtime Environment (JRE™).
-If your MATLAB code requires Java to run, explore your options for rebuilding your MATLAB Runtime Docker image with Java [here](https://www.mathworks.com/matlab-runtime-openjdk).
+If your MATLAB code requires Java to run, explore your options for rebuilding your MATLAB Runtime Docker image with a [compatible version](https://www.mathworks.com/matlab-runtime-openjdk) of Java.
 
-If you do not have a license, please contact your MathWorks representative [here](https://www.mathworks.com/company/aboutus/contact_us/contact_sales.html) or [request a trial license](https://www.mathworks.com/campaigns/products/trials.html?prodcode=PR). 
+If you do not have a license, please [contact your MathWorks representative](https://www.mathworks.com/company/aboutus/contact_us/contact_sales.html) or [request a trial license](https://www.mathworks.com/campaigns/products/trials.html?prodcode=PR).
 
 ## Quick Start
 The Quick Start option is recommended for the following cases:
 * You are deploying MATLAB Production Server R2024b or newer.
 * You don't require significant changes to the Helm chart.
-* For CI/CD workflows, we recommend that you retag and cache docker images in your private container registry.
+
+> **Note:** For CI/CD workflows, we recommend that you retag and cache Docker images in your private container registry.
 
 The Quick Start option only requires you to download a single file, rather than cloning the full GitHub repository. For more complex workflows, use the [Deployment Steps](#deployment-steps).
 
@@ -77,10 +78,10 @@ The Quick Start option only requires you to download a single file, rather than 
 
 2. Complete the steps in [Provide Mapping for Deployable Archives](#step-4-provide-mapping-for-deployable-archives).
 
-3. Before installing the chart, first set parameters that state your agreement to the MathWorks cloud reference architecture license and specify the address of the network license manager. In the top-level values-overrides.yaml file, set these parameters:
+3. Before installing the chart, first set parameters that state your agreement to the MathWorks cloud reference architecture license and specify the address of the network license manager. In the top-level `values-overrides.yaml` file, set these parameters:
 
-    To accept the license terms, set global > agreeToLicense to "yes".
-    To specify the address of the license server, set global > licenseServer using the format port_number@host. 
+    To accept the license terms, set `global` > `agreeToLicense` to `"yes"`.
+    To specify the address of the license server, set `global` > `licenseServer` using the format `port_number@host`.
 
     Next, install the Helm chart for MATLAB Production Server R2026b by using the following `helm install` command:
     ```
@@ -126,7 +127,7 @@ The MATLAB Production Server on Kubernetes GitHub repository contains Helm chart
     * `matlab-production-server` is the name of the repository.
     * `<release-tag>` is the tag name of the MATLAB Production Server release, for example, `r2026b`.
 
-    The `values.yaml` file specifies these values in the `productionServer` section, in the `registry`, `repository`, and `tag` variables, respectively. 
+    The `values.yaml` file specifies these values in the `productionServer` section, in the `registry`, `repository`, and `tag` variables, respectively.
 
 2. Pull the container image for MATLAB Runtime to your machine.
 
@@ -137,7 +138,7 @@ The MATLAB Production Server on Kubernetes GitHub repository contains Helm chart
     * `matlab-runtime` is the name of the repository.
     * `<release-tag>` is the tag name of the MATLAB Runtime release. Update this value to the release version of the MATLAB Runtime you are using, for example, `r2026b`. MATLAB Production Server supports MATLAB Runtime versions up to six releases back from the MATLAB Production Server version you are using.
 
-    The `values.yaml` file specifies these values in the `matlabRuntime` section, in the `registry`, `repository`, and `tag` variables, respectively.  
+    The `values.yaml` file specifies these values in the `matlabRuntime` section, in the `registry`, `repository`, and `tag` variables, respectively.
 
 ### Step 3: Upload Container Images to Private Registry
 After you pull the MATLAB Production Server and MATLAB Runtime container images to your system, upload them to a private container registry that your Kubernetes cluster can access.
@@ -148,7 +149,7 @@ After you pull the MATLAB Production Server and MATLAB Runtime container images 
 
 3. In the `values-overrides.yaml` file, set the `global` > `images` > `registry` variable to the name of your private registry.
 
-4. If your private registry requires authentication, create a Kubernetes Secret that your pod can use to pull the image from the private registry. For more information, see [Pull an Image from a Private Registry](https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/) in the Kubernetes documentation. 
+4. If your private registry requires authentication, create a Kubernetes Secret that your pod can use to pull the image from the private registry. For more information, see [Pull an Image from a Private Registry](https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/) in the Kubernetes documentation.
 
 5. In the `values-overrides.yaml` file, set the `global` > `images` > `pullSecret` variable to the name of the Kubernetes Secret you created.
 
@@ -160,10 +161,10 @@ To specify mapping, in the top-level `values-overrides.yaml` file, under `matlab
 To specify the storage location for storing deployable archives, under `autoDeploy`, set `volumeType` to one of the following:
 
 * `"nfs"` &mdash; Store archives to a location on the network file system. Specify values for the `server` and `path` variables. Specify the hostname of your NFS server in the `server` variable and the location of your deployable archives in the `path` variable. For more information about the `nfs` option, see [Volumes](https://kubernetes.io/docs/concepts/storage/volumes/) in the Kubernetes documentation.
-* `"pvc"` &mdash; Store archives to a persistent volume by using a Persistent Volume Claim. Specify a value for the `claimName` variable. To use this option, you must have an existing Persistent Volume Claim that is already bound to its underlying storage volume.  
-* `"azurefileshare"`  &mdash; Store archives to a file share using Azure™ Files. Specify values for `shareName` and `secretName` variables. To use this option, you must have an existing file share and Kubernetes secret used to access the file share. For details about Azure file shares, see [Create and use a volume with Azure Files in Azure Kubernetes Service (AKS)](https://learn.microsoft.com/en-us/azure/aks/azure-csi-files-storage-provision) in the Azure documentation.
+* `"pvc"` &mdash; Store archives to a persistent volume by using a Persistent Volume Claim. Specify a value for the `claimName` variable. To use this option, you must have an existing Persistent Volume Claim that is already bound to its underlying storage volume.
+* `"azurefileshare"` &mdash; Store archives to a file share using Azure™ Files. Specify values for `shareName` and `secretName` variables. To use this option, you must have an existing file share and Kubernetes secret used to access the file share. For details about Azure file shares, see [Create and use a volume with Azure Files in Azure Kubernetes Service (AKS)](https://learn.microsoft.com/en-us/azure/aks/azure-csi-files-storage-provision) in the Azure documentation.
 
-The default value for `volumeType` is `"empty"`. However, to access deployable archives, you must set `volumeType` to one of the previously described options. 
+The default value for `volumeType` is `"empty"`. However, to access deployable archives, you must set `volumeType` to one of the previously described options.
 
 ### Step 5: Install Helm Chart
 The Helm chart for MATLAB Production Server is located in the repository in `/releases/<release>/matlab-prodserver`. To install the Helm chart for the MATLAB Production Server release that you want to deploy, use the [helm install](https://helm.sh/docs/helm/helm_install/) command. Install the chart in a separate Kubernetes namespace. For more information about Kubernetes namespaces, see [Share a Cluster with Namespaces](https://kubernetes.io/docs/tasks/administer-cluster/namespaces/) in the Kubernetes documentation.
@@ -171,7 +172,7 @@ The Helm chart for MATLAB Production Server is located in the repository in `/re
 Before installing the chart, first set parameters that state your agreement to the MathWorks cloud reference architecture license and specify the address of the network license manager. In the top-level `values-overrides.yaml` file, set these parameters:
 
 - To accept the license terms, set `global` > `agreeToLicense` to `"yes"`.
-- To specify the address of the license server, set `global` > `licenseServer` using the format `port_number@host`. 
+- To specify the address of the license server, set `global` > `licenseServer` using the format `port_number@host`.
 
 Then, install the Helm chart for MATLAB Production Server by using the `helm install` command:
 
@@ -224,7 +225,6 @@ Sample JSON output for a successful connection: `{"status": "ok"}`
 
 ### Update Server Configuration Properties
 The default server configuration properties are stored in a [ConfigMap](https://kubernetes.io/docs/concepts/configuration/configmap/) located at `/releases/<release>/matlab-prodserver/templates/mps-2-configmap.yaml`. To update server properties, you can update `mps-2-configmap.yaml` or `values.yaml`. To apply the updated server properties to the deployment, see [helm upgrade](https://helm.sh/docs/helm/helm_upgrade/) and [kubectl scale](https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands#scale).
-
 
 ### Delete Your Deployment
 To remove all Kubernetes resources created by the Helm chart (including the deployment, pods, service, and configmap), use `helm uninstall`.
@@ -323,7 +323,7 @@ kubectl scale deployment matlab-production-server --namespace=<k8s-namespace> --
 
 For more information, see [How can I troubleshoot license errors when using MATLAB Production Server on Kubernetes?](https://www.mathworks.com/matlabcentral/answers/2183724-how-can-i-troubleshoot-license-errors-when-using-matlab-production-server-on-kubernetes)
 
-#### Container Download Issues
+#### Container Image Download Issues
 If you encounter issues downloading container images, see [Why am I encountering issues downloading containers for my MATLAB Production Server Kubernetes deployment?](https://www.mathworks.com/matlabcentral/answers/2184529-why-am-i-encountering-issues-downloading-containers-for-my-matlab-production-server-kubernetes-deplo)
 
 #### Configuration Changes Not Taking Effect (R2024b and Earlier)
