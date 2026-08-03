@@ -20,7 +20,7 @@ For more information about Kubernetes, see the [Kubernetes documentation](https:
 - [Deployment Steps](#deployment-steps)
   1. [Clone GitHub Repository](#step-1-clone-github-repository-that-contains-helm-chart)
   2. [Pull Container Images](#step-2-pull-container-images-for-matlab-production-server-and-matlab-runtime)
-  3. [Upload Container Images to Private Registry](#step-3-upload-container-images-to-private-registry-optional) *(optional)*
+  3. [Upload Container Images to Private Registry](#step-3-upload-container-images-to-private-registry) *(optional)*
   4. [Provide Mapping for Deployable Archives](#step-4-provide-mapping-for-deployable-archives)
   5. [Install Helm Chart](#step-5-install-helm-chart)
 - [Common Tasks](#common-tasks)
@@ -68,7 +68,7 @@ The Quick Start option is recommended for the following cases:
 * You don't require significant changes to the Helm chart.
 * For CI/CD workflows, we recommend that you retag and cache docker images in your private container registry.
 
-The Quick Start option only requires you to download a single file, rather than cloning the full GitHub repository. For more complex workflows, use the [Deployment Steps](#Deployment-Steps).
+The Quick Start option only requires you to download a single file, rather than cloning the full GitHub repository. For more complex workflows, use the [Deployment Steps](#deployment-steps).
 
 1. Download the `values-overrides.yaml` file containing configuration options that apply across all release deployments from the MATLAB Production Server on Kubernetes GitHub repository. You can use the cURL command below or click the "Download Raw File" icon.
     ```
@@ -206,7 +206,7 @@ You can scale MATLAB Production Server in two ways:
 
 * **License limits** &mdash; The total number of workers across all pods cannot exceed your MATLAB Production Server license seat count. For example, if you have a 4-seat license and configure 2 workers per pod, you can run at most 2 pods.
 * **Resource requirements** &mdash; As of R2025a, the default configuration creates 2 workers per pod, with CPU and memory requirements based on existing product recommendations. This results in a resource request of approximately 1 CPU per pod. When scaling the number of pods, ensure your Kubernetes cluster has sufficient resources to accommodate the total CPU and memory requirements, as it is easy to exceed overall cluster resource limits.
-* **Choosing between more pods vs. more workers** &mdash; More pods provides better fault isolation and allows Kubernetes to distribute load across nodes. More workers per pod reduces scheduling overhead but increases per-pod resource requirements.
+* **Choosing between more pods vs. more workers** &mdash; More pods provide better fault isolation and allow Kubernetes to distribute load across nodes. More workers per pod reduces scheduling overhead but increases per-pod resource requirements.
 
 ### Test Client Access Using Port Forwarding
 To test that the deployment was successful, first, use *port forwarding* to map the port that is running MATLAB Production Server inside the cluster (default = 9910) to a port that is available outside the cluster.
@@ -321,7 +321,7 @@ kubectl scale deployment matlab-production-server --namespace=<k8s-namespace> --
 * If the server has difficulty resolving the DNS for a license server specified by hostname, try using the license server's IP address instead (e.g., `27000@172.22.225.0` instead of `27000@MYLICENSEHOST`).
 * Each pod requires enough license seats for all its workers. For example, with the default of 2 workers per pod, you need at least 2 license seats per pod.
 
-For more information, see [How can I troubleshoot license errors when using MATLAB Production Server on Kubernetes?](https://www.mathworks.com/matlabcentral/answers/672216)
+For more information, see [How can I troubleshoot license errors when using MATLAB Production Server on Kubernetes?](https://www.mathworks.com/matlabcentral/answers/2183724-how-can-i-troubleshoot-license-errors-when-using-matlab-production-server-on-kubernetes)
 
 #### Container Download Issues
 If you encounter issues downloading container images, see [Why am I encountering issues downloading containers for my MATLAB Production Server Kubernetes deployment?](https://www.mathworks.com/matlabcentral/answers/659239)
