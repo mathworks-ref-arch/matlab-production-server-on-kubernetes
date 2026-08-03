@@ -14,6 +14,32 @@ For more information about MATLAB Production Server, see the [MATLAB Production 
 
 For more information about Kubernetes, see the [Kubernetes documentation](https://kubernetes.io/docs/home/).
 
+## Contents
+- [Requirements](#requirements)
+- [Quick Start](#quick-start)
+- [Deployment Steps](#deployment-steps)
+  1. [Clone GitHub Repository](#step-1-clone-github-repository-that-contains-helm-chart)
+  2. [Pull Container Images](#step-2-pull-container-images-for-matlab-production-server-and-matlab-runtime)
+  3. [Upload Container Images to Private Registry](#step-3-upload-container-images-to-private-registry) *(optional)*
+  4. [Provide Mapping for Deployable Archives](#step-4-provide-mapping-for-deployable-archives)
+  5. [Install Helm Chart](#step-5-install-helm-chart)
+- [Common Tasks](#common-tasks)
+  - [Upload Deployable Archive](#upload-deployable-archive)
+  - [Manage External Access Using Ingress](#manage-external-access-using-ingress)
+  - [Scale the Deployment](#scale-the-deployment)
+  - [Test Client Access Using Port Forwarding](#test-client-access-using-port-forwarding)
+  - [Update Server Configuration Properties](#update-server-configuration-properties)
+  - [Delete Your Deployment](#delete-your-deployment)
+- [Troubleshooting](#troubleshooting)
+  - [View Logs](#view-logs)
+  - [Check Deployment Status](#check-deployment-status)
+  - [Restart Pods](#restart-pods)
+  - [Common Issues](#common-issues)
+  - [kubectl Quick Reference](#kubectl-quick-reference)
+- [Execute Deployed Functions](#execute-deployed-functions)
+- [Request Enhancements](#request-enhancements)
+- [Get Technical Support](#get-technical-support)
+
 ## Requirements
 Before starting, you need the following:
 
@@ -42,14 +68,14 @@ The Quick Start option is recommended for the following cases:
 * You don't require significant changes to the Helm chart.
 * For CI/CD workflows, we recommend that you retag and cache docker images in your private container registry.
 
-The Quick Start option only requires you to download a single file, rather than cloning the full GitHub repository. For more complex workflows, use the [Deployment Steps](#Deployment-Steps)
+The Quick Start option only requires you to download a single file, rather than cloning the full GitHub repository. For more complex workflows, use the [Deployment Steps](#deployment-steps).
 
 1. Download the `values-overrides.yaml` file containing configuration options that apply across all release deployments from the MATLAB Production Server on Kubernetes GitHub repository. You can use the cURL command below or click the "Download Raw File" icon.
     ```
     curl -O https://raw.githubusercontent.com/mathworks-ref-arch/matlab-production-server-on-kubernetes/main/values-overrides.yaml
     ```
 
-2. Complete the steps in [Provide Mapping for Deployable Archives](#Provide-Mapping-for-Deployable-Archives).
+2. Complete the steps in [Provide Mapping for Deployable Archives](#step-4-provide-mapping-for-deployable-archives).
 
 3. Before installing the chart, first set parameters that state your agreement to the MathWorks cloud reference architecture license and specify the address of the network license manager. In the top-level values-overrides.yaml file, set these parameters:
 
@@ -63,8 +89,16 @@ The Quick Start option only requires you to download a single file, rather than 
 
 4. After the deployment is complete, upload the MATLAB Production Server deployable archive to your network file server or Azure file share. All users must have read permission to the deployable archive.
 
+> **Note:** After completing Quick Start, the following sections still apply:
+> - [Common Tasks](#common-tasks) (Ingress, port forwarding, configuration updates)
+>
+> The following sections are only needed for the full [Deployment Steps](#deployment-steps) workflow and can be skipped:
+> - Clone GitHub Repository
+> - Pull Container Images
+> - Upload Container Images to Private Registry
+
 ## Deployment Steps
-### Clone GitHub® Repository that Contains Helm Chart
+### Step 1: Clone GitHub® Repository that Contains Helm Chart
 The MATLAB Production Server on Kubernetes GitHub repository contains Helm charts that reference Ubuntu-based Docker container images for MATLAB Production Server deployment.
 
 1. Clone the MATLAB Production Server on Kubernetes GitHub repository to your machine.
@@ -81,7 +115,7 @@ The MATLAB Production Server on Kubernetes GitHub repository contains Helm chart
     * `Chart.yaml` &mdash; Contains metadata about the Helm chart.
     * `values.yaml` &mdash; Contains release-specific configuration options for the deployment.
 
-### Pull Container Images for MATLAB Production Server and MATLAB Runtime
+### Step 2: Pull Container Images for MATLAB Production Server and MATLAB Runtime
 
 1. Pull the container image for MATLAB Production Server to your machine.
 
@@ -105,7 +139,7 @@ The MATLAB Production Server on Kubernetes GitHub repository contains Helm chart
 
     The `values.yaml` file specifies these values in the `matlabRuntime` section, in the `registry`, `repository`, and `tag` variables, respectively.  
 
-### Upload Container Images to Private Registry
+### Step 3: Upload Container Images to Private Registry
 After you pull the MATLAB Production Server and MATLAB Runtime container images to your system, upload them to a private container registry that your Kubernetes cluster can access.
 
 1. Tag the images with information about your private registry by using [docker tag](https://docs.docker.com/engine/reference/commandline/tag/).
@@ -118,7 +152,7 @@ After you pull the MATLAB Production Server and MATLAB Runtime container images 
 
 5. In the `values-overrides.yaml` file, set the `global` > `images` > `pullSecret` variable to the name of the Kubernetes Secret you created.
 
-### Provide Mapping for Deployable Archives
+### Step 4: Provide Mapping for Deployable Archives
 Deploying MATLAB Production Server requires a running Kubernetes cluster. From the Kubernetes cluster that you use for MATLAB Production Server, provide a mapping from the storage location where you want to store MATLAB Production Server deployable archives (CTF files) to a storage resource in your cluster. You can store the deployable archives on the network file system or on the cloud. After the MATLAB Production Server deployment is complete, the deployable archives that you store in the mapped location are automatically deployed to the server.
 
 To specify mapping, in the top-level `values-overrides.yaml` file, under `matlabProductionServerSettings`, set values for the variables under `autoDeploy`.
@@ -131,7 +165,7 @@ To specify the storage location for storing deployable archives, under `autoDepl
 
 The default value for `volumeType` is `"empty"`. However, to access deployable archives, you must set `volumeType` to one of the previously described options. 
 
-### Install Helm Chart
+### Step 5: Install Helm Chart
 The Helm chart for MATLAB Production Server is located in the repository in `/releases/<release>/matlab-prodserver`. To install the Helm chart for the MATLAB Production Server release that you want to deploy, use the [helm install](https://helm.sh/docs/helm/helm_install/) command. Install the chart in a separate Kubernetes namespace. For more information about Kubernetes namespaces, see [Share a Cluster with Namespaces](https://kubernetes.io/docs/tasks/administer-cluster/namespaces/) in the Kubernetes documentation.
 
 Before installing the chart, first set parameters that state your agreement to the MathWorks cloud reference architecture license and specify the address of the network license manager. In the top-level `values-overrides.yaml` file, set these parameters:
@@ -149,13 +183,30 @@ After you install the chart, the pod takes a few minutes to initialize because t
 
 The deployment name is `deployment.apps/matlab-production-server`. You can use the [kubectl get](https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands#get) command to confirm that MATLAB Production Server is running. The name of the service that enables network access to the pod is `service/matlab-production-server`.
 
+## Common Tasks
+The following tasks can be performed at any time after the initial deployment is complete. They apply to both [Quick Start](#quick-start) and full [Deployment Steps](#deployment-steps) workflows.
+
 ### Upload Deployable Archive
 After the deployment is complete, upload the MATLAB Production Server deployable archive to your network file server or Azure file share. All users must have read permission to the deployable archive.
-
 
 ### Manage External Access Using Ingress
 You can manage access to MATLAB Production Server by specifying an [Ingress](https://kubernetes.io/docs/concepts/services-networking/ingress/) controller. The Ingress controller also acts as a load balancer and is the preferred way to expose MATLAB Production Server services in production. This reference architecture assumes that you have an existing Ingress controller already running on the Kubernetes cluster. Specify controller options in the `ingressController` variable of the `values-overrides.yaml` file or use the default values.
 You can enable inbound HTTPS connections by using an Ingress controller TLS termination.
+
+### Scale the Deployment
+You can scale MATLAB Production Server in two ways:
+
+* **Number of pods** (horizontal scaling) &mdash; Increase the number of pod replicas by using [kubectl scale](https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands#scale). For example, to scale to 4 pods:
+    ```
+    kubectl scale deployment matlab-production-server --namespace=<k8s-namespace> --replicas=4
+    ```
+* **Number of workers per pod** &mdash; Set the `--num-workers` option in the `values-overrides.yaml` file under `matlabProductionServerSettings` to control how many MATLAB workers run inside each pod.
+
+#### Best Practices and Restrictions
+
+* **License limits** &mdash; The total number of workers across all pods cannot exceed your MATLAB Production Server license seat count. For example, if you have a 4-seat license and configure 2 workers per pod, you can run at most 2 pods.
+* **Resource requirements** &mdash; As of R2025a, the default configuration creates 2 workers per pod, with CPU and memory requirements based on existing product recommendations. This results in a resource request of approximately 1 CPU per pod. When scaling the number of pods, ensure your Kubernetes cluster has sufficient resources to accommodate the total CPU and memory requirements, as it is easy to exceed overall cluster resource limits.
+* **Choosing between more pods vs. more workers** &mdash; More pods provide better fault isolation and allow Kubernetes to distribute load across nodes. More workers per pod reduces scheduling overhead but increases per-pod resource requirements.
 
 ### Test Client Access Using Port Forwarding
 To test that the deployment was successful, first, use *port forwarding* to map the port that is running MATLAB Production Server inside the cluster (default = 9910) to a port that is available outside the cluster.
@@ -174,6 +225,132 @@ Sample JSON output for a successful connection: `{"status": "ok"}`
 ### Update Server Configuration Properties
 The default server configuration properties are stored in a [ConfigMap](https://kubernetes.io/docs/concepts/configuration/configmap/) located at `/releases/<release>/matlab-prodserver/templates/mps-2-configmap.yaml`. To update server properties, you can update `mps-2-configmap.yaml` or `values.yaml`. To apply the updated server properties to the deployment, see [helm upgrade](https://helm.sh/docs/helm/helm_upgrade/) and [kubectl scale](https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands#scale).
 
+
+### Delete Your Deployment
+To remove all Kubernetes resources created by the Helm chart (including the deployment, pods, service, and configmap), use `helm uninstall`.
+
+First, find your release name by running `helm list` in the namespace containing your deployment:
+```
+helm list --namespace=<k8s-namespace>
+```
+
+Example output:
+```
+NAME                                 NAMESPACE   REVISION   UPDATED                                STATUS     CHART                         APP VERSION
+matlab-prodserver-k8s-1749484754     default     1          2025-06-09 11:59:15.8636828 -0400 EDT  deployed   matlab-prodserver-k8s-1.2.0   R2025a
+```
+
+Then, uninstall the release:
+```
+helm uninstall <release-name> --namespace=<k8s-namespace>
+```
+
+For example:
+```
+helm uninstall matlab-prodserver-k8s-1749484754 --namespace=<k8s-namespace>
+```
+
+> **Note:** The release name is auto-generated when you use `--generate-name` during installation (as in both the Quick Start and full Deployment Steps). It is not the same as the MATLAB release version (e.g., R2025a). Use `helm list` to find it.
+
+## Troubleshooting
+
+### View Logs
+To view MATLAB Production Server logs, query the pod using `kubectl logs`:
+```
+kubectl get pods --namespace=<k8s-namespace>
+kubectl logs <podname> --namespace=<k8s-namespace>
+```
+
+Example output:
+```
+'/opt/mpsinstance' STOPPED
+1 [2025.06.09 16:01:29.863738] [information] Starting master (pid = 21)
+2 [2025.06.09 16:01:29.864041] [information] Global locale: en_US
+3 [2025.06.09 16:01:29.864067] [information] Global encoding: US-ASCII
+```
+
+If the pod contains multiple containers, you may need to specify the container name:
+```
+kubectl logs <podname> -c mps --namespace=<k8s-namespace>
+```
+
+### Check Deployment Status
+Use `kubectl get all` to view all resources in your deployment namespace:
+```
+kubectl get all --namespace=<k8s-namespace>
+```
+
+Example output:
+```
+NAME                                            READY   STATUS    RESTARTS   AGE
+pod/matlab-production-server-5b7cb74fd9-h5tgh   1/1     Running   0          4m35s
+
+NAME                               TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE
+service/matlab-production-server   ClusterIP   10.106.203.19   <none>        9910/TCP   4d1h
+
+NAME                                       READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/matlab-production-server   1/1     1            1           4d1h
+```
+
+To get detailed information about a specific pod, including events and error messages:
+```
+kubectl describe pod <podname> --namespace=<k8s-namespace>
+```
+
+You can also check the server health using the health check API (see [Test Client Access Using Port Forwarding](#test-client-access-using-port-forwarding)).
+
+### Restart Pods
+If a pod is stuck in an error state after the root cause has been resolved, you can trigger it to reinitialize by deleting it. The deployment's replica set automatically creates a replacement pod.
+
+To restart a single pod:
+```
+kubectl delete pod <podname> --namespace=<k8s-namespace>
+```
+
+To restart all pods, scale the deployment to 0 and then back to the desired number:
+```
+kubectl scale deployment matlab-production-server --namespace=<k8s-namespace> --replicas=0
+kubectl scale deployment matlab-production-server --namespace=<k8s-namespace> --replicas=<desired-count>
+```
+
+### Common Issues
+
+#### License Errors
+* MATLAB Production Server on Kubernetes requires a **concurrent** license.
+* The license server must be reachable from the network within the Kubernetes cluster but must not be installed in the cluster.
+* If the server has difficulty resolving the DNS for a license server specified by hostname, try using the license server's IP address instead (e.g., `27000@172.22.225.0` instead of `27000@MYLICENSEHOST`).
+* Each pod requires enough license seats for all its workers. For example, with the default of 2 workers per pod, you need at least 2 license seats per pod.
+
+For more information, see [How can I troubleshoot license errors when using MATLAB Production Server on Kubernetes?](https://www.mathworks.com/matlabcentral/answers/2183724-how-can-i-troubleshoot-license-errors-when-using-matlab-production-server-on-kubernetes)
+
+#### Container Download Issues
+If you encounter issues downloading container images, see [Why am I encountering issues downloading containers for my MATLAB Production Server Kubernetes deployment?](https://www.mathworks.com/matlabcentral/answers/2184529-why-am-i-encountering-issues-downloading-containers-for-my-matlab-production-server-kubernetes-deplo)
+
+#### Configuration Changes Not Taking Effect (R2024b and Earlier)
+In R2024b and earlier, updating the configuration does not automatically trigger pods to restart. You must manually restart all pods after making configuration changes. This has been fixed in R2025a and later.
+
+### kubectl Quick Reference
+Most `kubectl` commands follow this pattern:
+```
+kubectl <action> <object-type> [object-name] --namespace=<k8s-namespace>
+```
+
+Common actions and examples:
+
+| Command | Description |
+|---------|-------------|
+| `kubectl get pods` | List all pods |
+| `kubectl get all` | List all resources |
+| `kubectl describe pod <podname>` | Show detailed pod information |
+| `kubectl logs <podname>` | View pod logs |
+| `kubectl delete pod <podname>` | Delete (restart) a pod |
+| `kubectl describe configmap matlab-production-server-config` | View server configuration |
+| `helm list` | List deployed Helm releases |
+
+> **Note:** All `kubectl` and `helm` commands are scoped to a namespace. If you do not specify `--namespace` (or `-n`), commands run in the `default` namespace. To change your default namespace, run:
+> ```
+> kubectl config set-context --current --namespace=<k8s-namespace>
+> ```
 
 ## Execute Deployed Functions
 To evaluate MATLAB functions deployed on the server, see [Client Programming](https://www.mathworks.com/help/mps/client-programming.html). Both synchronous and asynchronous request execution are supported.
