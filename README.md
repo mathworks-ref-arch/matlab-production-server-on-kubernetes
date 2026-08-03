@@ -357,8 +357,7 @@ To evaluate MATLAB functions deployed on the server, see [Client Programming](ht
 
 ## Request Enhancements
 
-To suggest additional features or capabilities, see
-[Request Reference Architectures](https://www.mathworks.com/products/reference-architectures/request-new-reference-architectures.html).
+To suggest additional features or capabilities, see [Request Reference Architectures](https://www.mathworks.com/products/reference-architectures/request-new-reference-architectures.html).
 
 ## Get Technical Support
 
