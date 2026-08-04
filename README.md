@@ -67,8 +67,6 @@ The Quick Start option is recommended for the following cases:
 * You are deploying MATLAB Production Server R2024b or newer.
 * You don't require significant changes to the Helm chart.
 
-> **Note:** For CI/CD workflows, we recommend that you retag and cache Docker images in your private container registry.
-
 The Quick Start option only requires you to download a single file, rather than cloning the full GitHub repository. For more complex workflows, use the [Deployment Steps](#deployment-steps).
 
 1. Download the `values-overrides.yaml` file containing configuration options that apply across all release deployments from the MATLAB Production Server on Kubernetes GitHub repository. You can use the cURL command below or click the "Download Raw File" icon.
@@ -96,7 +94,7 @@ The Quick Start option only requires you to download a single file, rather than 
 > The following sections are only needed for the full [Deployment Steps](#deployment-steps) workflow and can be skipped:
 > - Clone GitHub Repository
 > - Pull Container Images
-> - Upload Container Images to Private Registry
+> - Upload Container Images to Private Registry (recommended for CI/CD workflows)
 
 ## Deployment Steps
 ### Step 1: Clone GitHub® Repository that Contains Helm Chart
@@ -142,6 +140,8 @@ The MATLAB Production Server on Kubernetes GitHub repository contains Helm chart
 
 ### Step 3: Upload Container Images to Private Registry
 After you pull the MATLAB Production Server and MATLAB Runtime container images to your system, upload them to a private container registry that your Kubernetes cluster can access.
+
+> **Note:** This step is optional and recommended for CI/CD workflows.
 
 1. Tag the images with information about your private registry by using [docker tag](https://docs.docker.com/engine/reference/commandline/tag/).
 
